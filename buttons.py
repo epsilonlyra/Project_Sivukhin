@@ -12,7 +12,7 @@ class Picture():
     
     def __init__(self, x, y, image, width, height):
         """
-        Инициализация класса Button
+        Инициализация класса Picture
         image : pygame.surface object который будет рисоватся
         x, y координаты центра image на screen (оси - стандарт pygame)
         width, height - длина и ширина 
@@ -38,10 +38,18 @@ class Picture():
 
 class Button(Picture):
     
-    def __init__( self, x, y, image, func, *args):
+    def __init__(self, x, y, image, func, *size):
+        """
+        Инициализация класса Picture
+        image : pygame.surface object который будет рисоватся
+        x, y координаты центра image на screen (оси - стандарт pygame)
+        *size : длина, высота изображения.Если будет передано не два аргумента,
+        то будут использованы длина и высота image
+        func : функция вызываемая при нажатии кнопки
+        """
         
         self.func = func
-        if len(args) == 2:
+        if len(size) == 2:
             width = args[0]
             height = args[1]
         else:
@@ -52,8 +60,10 @@ class Button(Picture):
     def check_click(self, event):
         x_click = event.pos[0]
         y_click = event.pos[1]
-        if (x_click - self.x <= self.width / 2) and (x_click - self.x >= - self.width / 2):
-            if (y_click - self.y <= self.height / 2) and (y_click - self.y >= - self.height / 2):
+        if (x_click - self.x <= self.width / 2) and \
+        (x_click - self.x >= - self.width / 2):
+            if (y_click - self.y <= self.height / 2) and \
+            (y_click - self.y >= - self.height / 2):
                 self.func()
     
 
@@ -69,11 +79,11 @@ pygame.font.init()
 
 font = pygame.font.SysFont(None, 30)
 img = font.render('Click me!', True, 'red', 'black')
-
 button1 = Button(100, 100, img, printsus)
 
-
-
+button_play_surf = font.render('Play', True, 'red', 'black')
+button_pause_surf = font.render('Pause', True, 'red', 'black')
+button_quit_surf = font.render('Quit', True, 'red', 'black')
 
 
         
