@@ -2,7 +2,7 @@ import pygame
 import os
 
 def fetch_file(directory, filename):
-    return(os.path.join(os.path.abspath(directory), filename))
+    return pygame.image.load((os.path.join(os.path.abspath(directory), filename)))
 
 
 class Picture():
@@ -10,20 +10,29 @@ class Picture():
     Класс для рисования поверхностей на экране
     """
     
-    def __init__(self, x, y, image, width, height):
+    def __init__(self, x, y, image, *size, angle = None):
         """
         Инициализация класса Picture
         image : pygame.surface object который будет рисоватся
         x, y координаты центра image на screen (оси - стандарт pygame)
-        width, height - длина и ширина 
-
+        *size : длина, высота . Если будет передано  не два аргумента,
+        то будут использованы длина и высота image
         """
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
-        self.image = pygame.transform.scale(
+        if len(size) == 2:
+            width = size[0]
+            height = size[1]
+            self.image = pygame.transform.scale(
             image, (width, height))
+        else:
+            self.image = image
+        if angle:
+            self.angle = angle
+        else:
+            self.angle = 0
+        self.image = pygame.transform.rotate(self.image, self.angle)
+        self.image_rect = self.image.get_rect(center=(self.x, self.y))
 
     def draw(self, screen):
         """
@@ -31,9 +40,14 @@ class Picture():
         Parameters:
         screen :  pygame.surf.object на котором мы будем рисовать
         """
-        #self.image.set_colorkey('white') почему то неадекватная работа
-        screen.blit(self.image, (self.x - self.width / 2, self.y - 
-                                self.height / 2))
+        self.image.set_colorkey('black') #почему то неадекватная работа
+    
+        self.image = pygame.transform.rotate(self.image, self.angle)
+        self.image_rect = self.image.get_rect(center =
+                                          self.image_rect.center)
+        screen.blit(self.image, self.image_rect)
+        
+        
 
 
 class Button(Picture):
@@ -49,28 +63,18 @@ class Button(Picture):
         """
         
         self.func = func
-        if len(size) == 2:
-            width = args[0]
-            height = args[1]
-        else:
-            width = image.get_width()
-            height = image.get_height()
-        super().__init__(x, y, image, width, height)
+        super().__init__(x, y, image, *size)
 
     def check_click(self, event):
-        x_click = event.pos[0]
-        y_click = event.pos[1]
-        if (x_click - self.x <= self.width / 2) and \
-        (x_click - self.x >= - self.width / 2):
-            if (y_click - self.y <= self.height / 2) and \
-            (y_click - self.y >= - self.height / 2):
-                self.func()
+        x = event.pos[0]
+        y = event.pos[1]
+        if self.image_rect.collidepoint(x, y):
+            self.func()
     
 
-icon = pygame.image.load(fetch_file('pictures', 'icon.jpg')) # icon for app
-
-def printsus():
-    print('sus')
+icon = fetch_file('pictures', 'icon.jpg') # icon for app
+dgap_cat = fetch_file('pictures', 'cat_dgap.jpg')
+Cat = Picture(200, 200, dgap_cat, 100, 100, angle = 0)
 
 template_surf = pygame.Surface((100, 100))
 changable_surf = template_surf
@@ -78,10 +82,8 @@ changable_surf = template_surf
 pygame.font.init()
 
 font = pygame.font.SysFont(None, 30)
-img = font.render('Click me!', True, 'red', 'black')
-button1 = Button(100, 100, img, printsus)
 
-button_play_surf = font.render('Play', True, 'red', 'black')
+button_play_surf = font.render('Play', True, 'red', 'yellow')
 button_pause_surf = font.render('Pause', True, 'red', 'black')
 button_quit_surf = font.render('Quit', True, 'red', 'black')
 

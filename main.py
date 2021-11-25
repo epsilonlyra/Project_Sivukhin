@@ -41,7 +41,6 @@ class ButtonManager():
     
     Menu_buttons = [quit_button, play_button]
     Game_buttons = [pause_button]
-    Active_buttons = []
     
     def show_buttons(self):
         global paused
@@ -71,6 +70,8 @@ ButMan = ButtonManager()
 while not finished:
     screen.fill('white')
     ButMan.show_buttons()
+    Cat.draw(screen)
+    #Cat.angle += 0.1 кот распадается на атоме при таком кручении
     pygame.display.update()
     clock.tick(FPS)
     
