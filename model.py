@@ -243,63 +243,18 @@ def example():
 
 def step():
     screen.fill(BLACK)
-    pygame.draw.rect(screen, WHITE, (left, down, right-left, s))
     v += acc * dt
     r += v * dt
     t += dt
-              
-    # checking collisions with walls and drawing them
-    if inclined:
-        pygame.draw.line(screen, WHITE, (left, down),
-                        (right, right - (right-left)/math.tan(alpha)), width = 1)
-        for i in range(N):
-            x, y = r[i]
-            if x < left:
-                r[i][0] = left
-                v[i][0] = - v[i][0]
-            if x > right:
-                r[i][0] = right
-                v[i][0] = - v[i][0]
-            if y < up:
-                r[i][1] = up
-                v[i][1] = - v[i][1]
-            if y > down - (x-left)/math.tan(alpha):
-                r[i][1] = down - (x-left)/math.tan(alpha)
-                v[i][0], v[i][1] = reflect(v[i][0], v[i][1], alpha)
-
-    else:
-        for i in range(N):
-            x, y = r[i]
-            if x < left:
-                r[i][0] = left
-                v[i][0] = - v[i][0]
-            if x > right:
-                r[i][0] = right
-                v[i][0] = - v[i][0]
-            if y < up:
-                r[i][1] = up
-                v[i][1] = - v[i][1]
-            if y > down:
-                r[i][1] = down
-                v[i][1] = - v[i][1]
-
-    # drawing water
-    for el in r:
-        x, y = el
-        pygame.draw.circle(screen, BLUE, (x, y), r_ball)
-    pygame.display.update()
 
     rho = Density(r, m, h)
     acc = Acceleration(r, v, m, h, nu)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            finished = True
 
+if __name__ == "__main__":
+    example()
+    
 
-
-
-example()
 pygame.quit()
 
 

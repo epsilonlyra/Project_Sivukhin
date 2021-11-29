@@ -71,7 +71,7 @@ while not finished:
     screen.fill('white')
     ButMan.show_buttons()
     Cat.draw(screen)
-    #Cat.angle += 0.1 кот распадается на атоме при таком кручении
+    Cat.angle += 0.1 #кот распадается на атоме при таком кручении
     pygame.display.update()
     clock.tick(FPS)
     
