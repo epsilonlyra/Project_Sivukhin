@@ -1,8 +1,17 @@
 import pygame
 import os
 
-def fetch_file(directory, filename):
-    return pygame.image.load((os.path.join(os.path.abspath(directory), filename)))
+def fetch_file(directory, filename, *directories, type = None):
+    path = os.path.abspath(directory)
+    for directory in directories:
+        path = os.path.join(path, directory)
+
+    if type ==  None:
+        return pygame.image.load((os.path.join(path, filename)))
+    if type == 'music':
+        return pygame.mixer.music.load((os.path.join(path, filename)))
+    if type == 'other':
+        return (os.path.join(path, filename))
 
 
 class Picture():
@@ -42,10 +51,10 @@ class Picture():
         """
         self.image.set_colorkey('black') #почему то неадекватная работа
     
-        self.image = pygame.transform.rotate(self.image, self.angle)
-        self.image_rect = self.image.get_rect(center =
+        self.rot_image = pygame.transform.rotate(self.image, self.angle)
+        self.rot_image_rect = self.rot_image.get_rect(center =
                                           self.image_rect.center)
-        screen.blit(self.image, self.image_rect)
+        screen.blit(self.rot_image, self.rot_image_rect)
         
         
 
@@ -74,6 +83,7 @@ class Button(Picture):
 
 icon = fetch_file('pictures', 'icon.jpg') # icon for app
 dgap_cat = fetch_file('pictures', 'cat_dgap.jpg')
+TEST = fetch_file('pictures', 'TEST.png', 'TEST')
 Cat = Picture(200, 200, dgap_cat, 100, 100, angle = 0)
 
 template_surf = pygame.Surface((100, 100))
