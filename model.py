@@ -1,73 +1,81 @@
 import numpy as np
+import math
 import pygame
 
 BLUE = 0x0000FF
 BLACK = 0x000000
 WHITE = 0xFFFFFF
-rho_0 = 2
-speed = 10
+rho_0 = 10
+speed = 0.5
 h = 5
-g = 10
+g = 5
+r_ball = 6
+
+
+k = 100         # параметры для уравнения состояния
+power = 35
+
+gamma = 7
+
+death = False
 
 def W(x, y, h ):
-    """
-    Gausssian Smoothing kernel (3D)
-    x     is a vector/matrix of x positions
-    y     is a vector/matrix of y positions
-    z     is a vector/matrix of z positions
-    h     is the smoothing length
-    w     is the evaluated smoothing function
-    """
+    '''
+    Gausssian Smoothing kernel (2D)
+    x, y - вектора координат
+    h - глубина сглаживния
+    '''
+
+    # попытка поменять kernel на более адекватный
+    if death:
+        w = np.zeros(x.shape)
+        k = 15/(7*np.pi*h**2)
+        for i in range(x.shape[0]):
+            for j in range(x.shape[1]):
+                r = np.sqrt(x[i][j]**2 + y[i][j]**2)
+                xi = r/h
+                if xi < 1:
+                    w[i][j] = (2/3 - xi**2 + 1/2*xi**3)*k
+                elif xi < 2:
+                    w[i][j] = (2 - xi)**3/6*k
+                else:
+                    w[i][j] = 0
     
-    '''w = np.zeros(x.shape)
-    k = 15/(7*np.pi*h**2)
-    for i in range(x.shape[0]):
-        for j in range(x.shape[1]):
-            r = np.sqrt(x[i][j]**2 + y[i][j]**2)
-            xi = r/h
-            if xi < 1:
-                w[i][j] = (1-3/2*xi**2+3/4*xi**3)*k
-            elif xi < 2:
-                w[i][j] = (2-xi**3)/6*k
-            else:
-                w[i][j] = 0'''
-    r = np.sqrt(x**2 + y**2)
-    w = (1.0 / (h*np.sqrt(np.pi)))**3 * np.exp( -r**2 / h**2)
+    else:
+        r = np.sqrt(x**2 + y**2)
+        w = (1.0 / (h*np.sqrt(np.pi)))**3 * np.exp( -r**2 / h**2)
     return w
 	
 	
 def gradW(x, y, h ):
-    """
-    Gradient of the Gausssian Smoothing kernel (3D)
-    x     is a vector/matrix of x positions
-    y     is a vector/matrix of y positions
-    z     is a vector/matrix of z positions
-    h     is the smoothing length
-    wx, wy, wz     is the evaluated gradient
-    """
+    '''
+    Gradient of the Gausssian Smoothing kernel (2D)
+    x, y - вектора координат
+    h - глубина сглаживния
+    '''
     wx = np.zeros(x.shape)
     wy = np.zeros(y.shape)
     k = 15/(7*np.pi*h**2)
 
-    '''for i in range(x.shape[0]):
-        for j in range(x.shape[1]):
-            r = np.sqrt(x[i][j]**2 + y[i][j]**2)
-            xi = (x[i][j]**2 + y[i][j]**2)**(0.5)/h
-            if (x[i][j] == 0) and (y[i][j] == 0):
-                wx[i][j], wy[i][j] = 0, 0
-            if xi < 1:
-                wx[i][j] = 0
-                wx[i][j], wy[i][j] = k*x[i][j]/(h*r)*(-3*xi + 9/4*xi**2), k*y[i][j]/(h*r)*(-3*xi + 9/4*xi**2)
-            elif xi < 2:
-                wx[i][j], wy[i][j] = k*x[i][j]/(h*r)*(-xi**2/2), k*y[i][j]/(h*r)*(-xi**2/2)
-            else:
-                wx[i][j], wy[i][j] = 0, 0'''
+    if death:
+        for i in range(x.shape[0]):
+            for j in range(y.shape[0]):
+                rr = math.sqrt(x[i][j]**2 + y[i][j]**2)
+                xi = rr/h
+                if (x[i][j] == 0) and (y[i][j] == 0):
+                    wx[i][j], wy[i][j] = 0, 0
+                elif xi < 1:
+                    wx[i][j], wy[i][j] = k*x[i][j]/(h*rr)*(-2*xi + 3/2*xi**2), k*y[i][j]/(h*rr)*(-2*xi + 3/2*xi**2)
+                elif xi < 2:
+                    wx[i][j], wy[i][j] = k*x[i][j]/(h*rr)*(-(2-xi)**2/2), k*y[i][j]/(h*rr)*(-(2-xi)**2/2)
+                else:
+                    wx[i][j], wy[i][j] = 0, 0
 
-    r = np.sqrt(x**2 + y**2)
-    
-    n = -2 * np.exp( -r**2 / h**2) / h**5 / (np.pi)**(3/2)
-    wx = n * x
-    wy = n * y
+    else:
+        r = np.sqrt(x**2 + y**2)
+        n = -2 * np.exp( -r**2 / h**2) / h**5 / (np.pi)**(3/2)
+        wx = n * x
+        wy = n * y
     
     return wx, wy
 
@@ -101,50 +109,58 @@ def Density(r, m, h):
     
     return rho
 
-def Pressure(rho, k, n):
+def Pressure(rho):
     '''
     Возвращает давление
     '''
 
-    p = k * rho**(1+1/n)
+    #p = rho_0 * speed**2 * ((rho/rho_0)**gamma - 1) / gamma
+    p = k * rho**(1+1/power)
     #p = speed**2*(rho-rho_0)
 
     return p
 
-def Acceleration(r, v, m, h, k, n, nu):
+def Acceleration(r, v, m, h, nu):
     '''
     Возвращает ускорение частиц
     '''
     rho = Density(r, m, h)
-    p = Pressure(rho, k, n)
+    p = Pressure(rho)
     dx, dy = RelativeCoordinates(r)
     dWx, dWy = gradW(dx, dy, h)
 
     ax = -np.sum(m * (p/rho**2 + p.T/rho.T**2) * dWx, 1)
     ay = -np.sum(m * (p/rho**2 + p.T/rho.T**2) * dWy, 1)
-
-    
-
     ay += g
-
-    
-        
     a = np.array([ax, ay])
     a = a.T
-
-
     a -= nu * v
 
     return a
 
+def reflect(vx, vy, alpha):
+    '''
+    vx, vy - координаты скорости
+    alpha - угол
+    '''
+    u = vy * math.cos(alpha) -vx * math.sin(alpha)
+    ux = -u * math.sin(alpha)
+    uy = u * math.cos(alpha)
+
+    #if True:
+    #    uu = 
+    return ux, uy
 
 
-def main():
+
+
+
+def example():
 
     pygame.init()
     screen = pygame.display.set_mode((600, 600))
     
-    N = 400
+    N = 800
     t = 0
     dt = 0.2
 
@@ -153,9 +169,8 @@ def main():
     right = 500     # правая граница
     up = 100        # верхняя граница
     down = 500      # нижняя граница
-    k = 100         # параметры для уравнения состояния
-    n = 35
     nu = 0.2
+    alpha = -2
 
     m = 1
     
@@ -164,19 +179,95 @@ def main():
     r = np.array([x, y]).T
     v = np.zeros(r.shape)
 
-    acc = Acceleration(r, v, m, h, k, n, nu)
+    acc = Acceleration(r, v, m, h, nu)
 
-    while True:
+    finished = False
+    inclined = True
+    
+    while not finished:
         screen.fill(BLACK)
         pygame.draw.rect(screen, WHITE, (left, down, right-left, s))
-        for el in r:
-            x, y = el
-            pygame.draw.circle(screen, BLUE, (x, y), 6)
-        pygame.display.update()
         v += acc * dt
         r += v * dt
         t += dt
+                
+        # checking collisions with walls and drawing them
+        if inclined:
+            pygame.draw.line(screen, WHITE, (left, down),
+                             (right, right - (right-left)/math.tan(alpha)), width = 1)
+            for i in range(N):
+                x, y = r[i]
+                if x < left:
+                    r[i][0] = left
+                    v[i][0] = - v[i][0]
+                if x > right:
+                    r[i][0] = right
+                    v[i][0] = - v[i][0]
+                if y < up:
+                    r[i][1] = up
+                    v[i][1] = - v[i][1]
+                if y > down - (x-left)/math.tan(alpha):
+                    r[i][1] = down - (x-left)/math.tan(alpha)
+                    v[i][0], v[i][1] = reflect(v[i][0], v[i][1], alpha)
 
+        else:
+            for i in range(N):
+                x, y = r[i]
+                if x < left:
+                    r[i][0] = left
+                    v[i][0] = - v[i][0]
+                if x > right:
+                    r[i][0] = right
+                    v[i][0] = - v[i][0]
+                if y < up:
+                    r[i][1] = up
+                    v[i][1] = - v[i][1]
+                if y > down:
+                    r[i][1] = down
+                    v[i][1] = - v[i][1]
+
+        # drawing water
+        for el in r:
+            x, y = el
+            pygame.draw.circle(screen, BLUE, (x, y), r_ball)
+        pygame.display.update()
+
+        rho = Density(r, m, h)
+        acc = Acceleration(r, v, m, h, nu)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                finished = True
+
+
+
+def step():
+    screen.fill(BLACK)
+    pygame.draw.rect(screen, WHITE, (left, down, right-left, s))
+    v += acc * dt
+    r += v * dt
+    t += dt
+              
+    # checking collisions with walls and drawing them
+    if inclined:
+        pygame.draw.line(screen, WHITE, (left, down),
+                        (right, right - (right-left)/math.tan(alpha)), width = 1)
+        for i in range(N):
+            x, y = r[i]
+            if x < left:
+                r[i][0] = left
+                v[i][0] = - v[i][0]
+            if x > right:
+                r[i][0] = right
+                v[i][0] = - v[i][0]
+            if y < up:
+                r[i][1] = up
+                v[i][1] = - v[i][1]
+            if y > down - (x-left)/math.tan(alpha):
+                r[i][1] = down - (x-left)/math.tan(alpha)
+                v[i][0], v[i][1] = reflect(v[i][0], v[i][1], alpha)
+
+    else:
         for i in range(N):
             x, y = r[i]
             if x < left:
@@ -190,16 +281,26 @@ def main():
                 v[i][1] = - v[i][1]
             if y > down:
                 r[i][1] = down
-                v[i][1] = - abs(v[i][1])
-        
-                
+                v[i][1] = - v[i][1]
 
-        rho = Density(r, m, h)
-        acc = Acceleration(r, v, m, h, k, n, nu)
-    
+    # drawing water
+    for el in r:
+        x, y = el
+        pygame.draw.circle(screen, BLUE, (x, y), r_ball)
+    pygame.display.update()
 
-main()
-    
+    rho = Density(r, m, h)
+    acc = Acceleration(r, v, m, h, nu)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            finished = True
+
+
+
+
+example()
+pygame.quit()
 
 
 
