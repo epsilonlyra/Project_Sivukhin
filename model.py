@@ -239,10 +239,15 @@ def example():
             if event.type == pygame.QUIT:
                 finished = True
 
+def make_water(left, right, up, down, N):
+    x = np.random.randint(left, (right+left)/2, N).astype(np.float64)
+    y = np.random.randint((up+down)/2, down, N).astype(np.float64)
+    r = np.array([x, y]).T
+    v = np.zeros(r.shape)
 
+    return r, v
 
 def step():
-    screen.fill(BLACK)
     v += acc * dt
     r += v * dt
     t += dt
