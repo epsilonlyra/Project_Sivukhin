@@ -1,7 +1,9 @@
 import pygame as pg
+import model
 from pygame.math import Vector2
 from math import atan2, degrees, pi
 from buttons import fetch_file
+
 
 
 pg.init()
@@ -11,35 +13,27 @@ BG_COLOR = pg.Color(255, 0, 0)
 screen.fill(BG_COLOR)
 
 
-# You need surfaces with an alpha channel to
-# create masks, therefore pass `pg.SRCALPHA`.
-'''
-obstacle = pg.image.load("football_PNG52759.png").convert_alpha()
-obstacle_mask = pg.mask.from_surface(obstacle)
-obstacle_rect = obstacle.get_rect()
-ox = 350 - obstacle_rect.center[0]
-oy = 350 - obstacle_rect.center[1]'''
-
-
-
 r =15
 BALL = pg.Surface((30, 30), pg.SRCALPHA)
 pg.draw.circle(BALL, [250, 250, 250], [15, 15], r)
-# Ball variables.
 ball_pos = Vector2(30, 30)
 ballrect = BALL.get_rect(center=ball_pos)
 ball_vel = Vector2(0, 0)
 ball_mask = pg.mask.from_surface(BALL)
 
-#screen.blit(REDGOAL, redgoal_rect)
 
 
-kol = 0
+WATER = pg.Surface((20, 20), pg.SRCALPHA)
+r_vector, v = model.make_water(400, 600, 100, 300, 400)
+pg.draw.circle(WATER, [0, 0, 255], [10, 10], 6)
+drop_mask = pg.mask.from_surface(WATER)
+
+
+
 
 obstacle = fetch_file('pictures', 'TEST2.png').convert_alpha()
 obstacle_rect = obstacle.get_rect()
 obstacle.set_colorkey((255,255,255))
-#obstacle_mask = pg.mask.from_surface(obstacle)
 ox = 350 - obstacle_rect.center[0]
 oy = 250 - obstacle_rect.center[1]
 
@@ -54,7 +48,10 @@ oy1 = 350 - body_rect.center[1]
 
 done = False
 while not done:
-    
+    r_vector, v = model.step(r_vector, v)
+
+    #for drop in r_vector:
+        
     
     #screen.fill(BG_COLOR)
     for event in pg.event.get():
@@ -70,7 +67,6 @@ while not done:
             elif event.key == pg.K_s:
                  ball_vel.y = 5
             elif event.key == pg.K_z:
-                #pg.draw.circle(screen, pg.Color(0, 0, 0), pg.mouse.get_pos(), 10)
                 x, y = pg.mouse.get_pos()
                 pg.draw.circle(obstacle, (255, 255, 255), (-ox + x, -oy + y), 50)
                 print('Удаление области')
@@ -80,8 +76,6 @@ while not done:
             pg.draw.circle(obstacle, (255, 255, 255), (-ox + x, -oy + y), 0)
             print('Удаление области')
             print(pg.mouse.get_pos())
-        #if event.type == pg.MOUSEMOTION:
-            #event.type == pg.MOUSEBUTTONDOWN:
     if pg.mouse.get_pressed()[0]:
         x, y = pg.mouse.get_pos()
         pg.draw.circle(obstacle, (255, 255, 255), (-ox + x, -oy + y), 40)
@@ -106,9 +100,19 @@ while not done:
 
     offset = ox - ballrect[0], oy - ballrect[1]
     offset1 = ox1 - ballrect[0], oy1 - ballrect[1]
-    
-    for i in range(10000):
-        overlap = ball_mask.overlap(obstacle_mask, offset) or ball_mask.overlap(body_mask, offset1)
+    '''
+    for el in r_vector:
+        x, y = el
+        x = int(x)
+        y = int(y)
+        screen.blit(WATER, (x, y))
+        offset2 = ox - x, oy - y
+        overlap1 = drop_mask.overlap(obstacle_mask, offset2)
+        if overlap1:
+            ball_vel.y *= -1
+            ball_vel.x *= -1'''
+
+    overlap = ball_mask.overlap(obstacle_mask, offset) or ball_mask.overlap(body_mask, offset1) 
     
 
     if overlap:
@@ -116,15 +120,26 @@ while not done:
         ball_vel.x *= -1
         pg.draw.line(BALL, (0, 0, 255), (r, r), overlap)
         alp = atan2(overlap[0] - r, overlap[1] - r)
-        kol += 1
         print((alp*180/pi-90)*pi/180)
 
     screen.fill(BG_COLOR)
     screen.blit(BALL, ballrect)
+    
     screen.blit(obstacle, (ox, oy))
     screen.blit(body, (ox1, oy1))
 
+    for el in r_vector:
+        x, y = el
+        x = int(x)
+        y = int(y)
+        screen.blit(WATER, (x, y))
+        offset2 = ox - x, oy - y
+        overlap1 = drop_mask.overlap(obstacle_mask, offset2)
+        if overlap1:
+            ball_vel.y *= -1
+            ball_vel.x *= -1
+        
     pg.display.flip()
-    clock.tick(180)
+    clock.tick(30)
 
 pg.quit()

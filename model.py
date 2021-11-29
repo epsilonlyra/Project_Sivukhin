@@ -10,10 +10,12 @@ speed = 0.5
 h = 5
 g = 5
 r_ball = 6
-
+m = 1
 
 k = 100         # параметры для уравнения состояния
 power = 35
+nu = 0.2
+dt = 0.2
 
 gamma = 7
 
@@ -247,13 +249,16 @@ def make_water(left, right, up, down, N):
 
     return r, v
 
-def step():
-    v += acc * dt
-    r += v * dt
-    t += dt
-
+def step(r, v):
     rho = Density(r, m, h)
     acc = Acceleration(r, v, m, h, nu)
+    
+    v += acc * dt
+    r += v * dt
+
+    return r, v
+
+    
 
 
 if __name__ == "__main__":
