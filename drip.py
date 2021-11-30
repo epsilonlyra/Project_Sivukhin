@@ -3,6 +3,7 @@ import model
 from pygame.math import Vector2
 from math import atan2, degrees, pi
 from buttons import fetch_file
+import math
 
 
 
@@ -24,7 +25,7 @@ ball_mask = pg.mask.from_surface(BALL)
 
 
 WATER = pg.Surface((20, 20), pg.SRCALPHA)
-r_vector, v = model.make_water(400, 600, 100, 300, 400)
+r_vector, v = model.make_water(400, 600, -100, 100, 300)
 pg.draw.circle(WATER, [0, 0, 255], [10, 10], 6)
 drop_mask = pg.mask.from_surface(WATER)
 
@@ -128,17 +129,20 @@ while not done:
     screen.blit(obstacle, (ox, oy))
     screen.blit(body, (ox1, oy1))
 
-    for el in r_vector:
-        x, y = el
+    for i in range(len(r_vector)):
+        x, y = r_vector[i]
         x = int(x)
         y = int(y)
         screen.blit(WATER, (x, y))
         offset2 = ox - x, oy - y
         overlap1 = drop_mask.overlap(obstacle_mask, offset2)
         if overlap1:
-            ball_vel.y *= -1
-            ball_vel.x *= -1
-        
+            alpha = atan2(overlap1[0] - 10, overlap1[1] - 10)-pi/2
+            #print(alpha*180/pi)
+            v[i][0], v[i][1] = model.reflect(v[i][0], v[i][1], alpha)
+            delta = 4.5
+            r_vector[i][0] -= delta*math.cos(alpha)
+            r_vector[i][1] -= delta*math.sin(alpha)
     pg.display.flip()
     clock.tick(30)
 

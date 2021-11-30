@@ -145,10 +145,12 @@ def reflect(vx, vy, alpha):
     vx, vy - координаты скорости
     alpha - угол
     '''
-    u = vy * math.cos(alpha) -vx * math.sin(alpha)
-    ux = -u * math.sin(alpha)
-    uy = u * math.cos(alpha)
+    u = vy * math.cos(alpha) - vx * math.sin(alpha)
+    w = vx * math.cos(alpha) + vy * math.sin(alpha)
 
+    k = 0.6
+    ux = -u * math.sin(alpha) - k*w * math.cos(alpha)
+    uy = u * math.cos(alpha) - k*w * math.sin(alpha)
     #if True:
     #    uu = 
     return ux, uy
