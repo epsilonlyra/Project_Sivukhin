@@ -5,8 +5,6 @@ from math import atan2, degrees, pi
 from buttons import fetch_file
 import math
 
-
-
 pg.init()
 screen = pg.display.set_mode((640, 480))
 clock = pg.time.Clock()
@@ -25,7 +23,7 @@ ball_mask = pg.mask.from_surface(BALL)
 
 
 WATER = pg.Surface((20, 20), pg.SRCALPHA)
-r_vector, v = model.make_water(400, 600, -100, 100, 300)
+r_vector, v = model.make_water(400, 600, -200, 0, 300)
 pg.draw.circle(WATER, [0, 0, 255], [10, 10], 6)
 drop_mask = pg.mask.from_surface(WATER)
 
@@ -127,22 +125,30 @@ while not done:
     screen.blit(BALL, ballrect)
     
     screen.blit(obstacle, (ox, oy))
-    screen.blit(body, (ox1, oy1))
+    #screen.blit(body, (ox1, oy1))
 
     for i in range(len(r_vector)):
         x, y = r_vector[i]
-        x = int(x)
-        y = int(y)
-        screen.blit(WATER, (x, y))
+        a1 = int(x)
+        a2 = int(y)
+        screen.blit(WATER, (a1, a2))
         offset2 = ox - x, oy - y
-        overlap1 = drop_mask.overlap(obstacle_mask, offset2)
-        if overlap1:
-            alpha = atan2(overlap1[0] - 10, overlap1[1] - 10)-pi/2
-            #print(alpha*180/pi)
+        offser3 = ox - x - 2 * v[i][0], oy - y -  2 * v[i][1]
+        crisis = drop_mask.overlap(obstacle_mask, offset2)
+        if crisis:
+            dx = drop_mask.overlap_area(obstacle_mask, (ox - x + 1, oy - y)) - \
+            drop_mask.overlap_area(obstacle_mask, (ox - x - 1, oy - y))
+            
+            dy = drop_mask.overlap_area(obstacle_mask, (ox - x, oy - y + 1)) - \
+            drop_mask.overlap_area(obstacle_mask, (ox - x, oy - y - 1))
+            alpha = atan2(dy, dx)
+            if alpha == pi/2:
+                alpha = -pi/2
             v[i][0], v[i][1] = model.reflect(v[i][0], v[i][1], alpha)
-            delta = 4.5
-            r_vector[i][0] -= delta*math.cos(alpha)
-            r_vector[i][1] -= delta*math.sin(alpha)
+            delta = 1
+            r_vector[i][0] += delta*math.cos(alpha)
+            r_vector[i][1] += delta*math.sin(alpha)
+                
     pg.display.flip()
     clock.tick(30)
 

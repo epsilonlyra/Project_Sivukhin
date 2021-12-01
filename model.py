@@ -148,7 +148,7 @@ def reflect(vx, vy, alpha):
     u = vy * math.cos(alpha) - vx * math.sin(alpha)
     w = vx * math.cos(alpha) + vy * math.sin(alpha)
 
-    k = 0.6
+    k = 1
     ux = -u * math.sin(alpha) - k*w * math.cos(alpha)
     uy = u * math.cos(alpha) - k*w * math.sin(alpha)
     #if True:
