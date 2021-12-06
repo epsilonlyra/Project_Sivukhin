@@ -4,6 +4,9 @@ from pygame.math import Vector2
 from math import atan2, degrees, pi
 from buttons import fetch_file
 import math
+import ducks
+from ducks import Duck
+from ducks import duck_image
 
 def collide(mask, x_mask, y_mask, i):
     """
@@ -15,6 +18,8 @@ def collide(mask, x_mask, y_mask, i):
     """
     global v,r_vector
     x, y = r_vector[i]
+    x = int(x)
+    y = int(y)
     offset2 = x_mask- x, y_mask - y
     
     crisis = drop_mask.overlap(mask, offset2)
@@ -39,6 +44,8 @@ def collide(mask, x_mask, y_mask, i):
             r_vector[i][0] += delta*math.cos(alpha)
             r_vector[i][1] += delta*math.sin(alpha)
             x, y = r_vector[i]
+            x = int(x)
+            y = int(y)
             offset2 = x_mask- x, y_mask - y
 
 
@@ -90,6 +97,16 @@ def example():
     ball_mask = pg.mask.from_surface(BALL)
     
     done = False
+
+    # инициализация уток
+    duck_array = []
+    x_duck = 400
+    y_duck = 200
+
+        
+    duck_array.append(Duck(ducks.circle_function(200, 200, 10), 30, 200, 200,
+                           using_mask = True))
+    
     while not done:
         r_vector, v = model.step(r_vector, v)
 
@@ -156,12 +173,27 @@ def example():
         screen.blit(destr, (destr_x, destr_y))
         screen.blit(indestr, (indestr_x, indestr_y))
 
+        # движение воды
         for i in range(len(r_vector)):
             x, y = r_vector[i]
             screen.blit(WATER, (int(x), int(y)))
+            for d in duck_array:
+                screen.blit(duck_image[d.level], (int(d.x), int(d.y)))
             
             collide(destr_mask, destr_x, destr_y, i)
             collide(indestr_mask, indestr_x, indestr_y, i)
+
+            for d in duck_array:
+                if d.check(x, y, drop_mask):
+                    d.water += 1
+                    r_vector[i] = [-1000, -1000]
+                    break
+
+        # обновление уток
+        for d in duck_array:
+            d.upgrade()
+            if d.level == 3:
+                duck_array.remove(d)
             
                     
         pg.display.flip()
