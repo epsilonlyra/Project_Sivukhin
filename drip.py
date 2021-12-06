@@ -69,7 +69,7 @@ screen.fill(BG_COLOR)
 side = 20
 WATER = pg.Surface((side, side), pg.SRCALPHA)
 r_vector, v = model.make_water(400, 600, -200, 0, 300)
-r_water = 6
+r_water = 8
 pg.draw.circle(WATER, [0, 0, 255], [int(side/2), int(side/2)], r_water)
 drop_mask = pg.mask.from_surface(WATER)
 
@@ -100,14 +100,14 @@ def example():
 
     # инициализация уток
     duck_array = []
-    x_duck = 400
-    y_duck = 200
-
         
     duck_array.append(Duck(ducks.circle_function(200, 200, 10), 30, 200, 200,
                            using_mask = True))
-    
+
+    iteration = 0
+    last_r_vectors = []
     while not done:
+        iteration += 1
         r_vector, v = model.step(r_vector, v)
 
         for event in pg.event.get():
@@ -176,6 +176,7 @@ def example():
         # движение воды
         for i in range(len(r_vector)):
             x, y = r_vector[i]
+            drawing water
             screen.blit(WATER, (int(x), int(y)))
             for d in duck_array:
                 screen.blit(duck_image[d.level], (int(d.x), int(d.y)))
@@ -194,8 +195,26 @@ def example():
             d.upgrade()
             if d.level == 3:
                 duck_array.remove(d)
-            
-                    
+
+        '''
+        if iteration <= 5:
+            last_r_vectors.append(r_vector)
+        if iteration > 5:
+            last_r_vectors.remove(last_r_vectors[2])
+            last_r_vectors.append(r_vector)
+        n = len(last_r_vectors)
+        i = 0
+        while i < n:
+            new_side = int(side - 3*i)
+            water_surf = pg.transform.scale(WATER, (new_side, new_side))
+            for d in last_r_vectors[n - 1 - i]:
+                x, y = d
+                screen.blit(water_surf, (int(x), int(y)))
+            i += 1
+        '''
+                
+        
+        
         pg.display.flip()
         clock.tick(30)
         a = (clock.get_fps())

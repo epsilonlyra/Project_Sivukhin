@@ -1,4 +1,5 @@
 import pygame as pg
+import buttons
 
 
 
@@ -60,9 +61,9 @@ side = 40
 r = 10
 duck_image = []
 for i in range(4):
-    surf = pg.Surface((side, side), pg.SRCALPHA)
-    pg.draw.circle(surf, [255, 255, 0], [side/2, side/2], r*(1+i/3))
-    duck_image.append(surf)
+    duck_pick = buttons.Picture(0, 0, buttons.fetch_file('pictures', 'fpmi.png'),
+                                40+20*i, 40+20*i)
+    duck_image.append(duck_pick.image)
 
 
 

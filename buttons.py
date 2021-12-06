@@ -34,6 +34,7 @@ class Picture():
             height = size[1]
             self.image = pygame.transform.scale(
             image, (width, height))
+            self.image.set_colorkey('white')
         else:
             self.image = image
         if angle:
@@ -49,7 +50,7 @@ class Picture():
         Parameters:
         screen :  pygame.surf.object на котором мы будем рисовать
         """
-        self.image.set_colorkey('black') #почему то неадекватная работа
+        #self.image.set_colorkey('black') #почему то неадекватная работа
     
         self.rot_image = pygame.transform.rotate(self.image, self.angle)
         self.rot_image_rect = self.rot_image.get_rect(center =
