@@ -85,7 +85,7 @@ class Button(Picture):
 icon = fetch_file('pictures', 'icon.jpg') # icon for app
 dgap_cat = fetch_file('pictures', 'cat_dgap.jpg')
 TEST = fetch_file('pictures', 'TEST.png', 'TEST')
-Cat = Picture(200, 200, dgap_cat, 100, 100, angle = 0)
+Cat = Picture(200, 700, dgap_cat, 100, 100, angle = 0)
 
 template_surf = pygame.Surface((100, 100))
 changable_surf = template_surf

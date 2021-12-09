@@ -8,8 +8,6 @@ import ducks
 from ducks import Duck
 from ducks import duck_image
 
-
-
 class Droplet():
     """
     Класс для отображения частиц воды
@@ -34,28 +32,35 @@ class Droplet():
         self.side = side
         self.k = 1 # коэфициент сжатия
 
-    def draw(self, screen):
+    def draw(self, screen, paused):
         
         """
         Рисует частицу и уменьшает размер поверхности
         """
-        self.side = int(self.side/(self.k * self.k))
+        if not paused:
+            self.side = int(self.side/(self.k * self.k))
+    
         surf = pg.transform.scale(self.surf, (self.side, self.side))
         surf.set_alpha(100)
         screen.blit(surf, (self.x, self.y))
 
-    def draw_water(screen):
+    def draw_water(screen, paused):
         """
         Рисует все следы из массива следов, если размер следа мал удаляет его
         """
-        for drop in Droplet.water_array:
-            drop.draw(screen)
-            drop.k += 0.005
-            if drop.k >= 1.05:
-                Droplet.water_array.remove(drop)
+        if not paused:
+            for drop in Droplet.water_array:
+                drop.draw(screen, paused)
+                drop.k += 0.005
+                if drop.k >= 1.05:
+                    Droplet.water_array.remove(drop)
+        else:
+            for drop in Droplet.water_array:
+                drop.draw(screen, paused)
+            
             
 
-def collide(mask, x_mask, y_mask, i):
+def collide(mask, x_mask, y_mask, r_vector, i, v):
     """
     Эта функция отвечает за столкновение частицы со стенками
     Она меняет скорости и координаты частиц
@@ -63,7 +68,6 @@ def collide(mask, x_mask, y_mask, i):
     x_mask, y_mask координаты блита  соответсвущей поверхности
 
     """
-    global v,r_vector
     x, y = r_vector[i]
     x = int(x)
     y = int(y)
@@ -97,6 +101,7 @@ def collide(mask, x_mask, y_mask, i):
             y = int(y)
             
             offset2 = x_mask- x, y_mask - y
+    return(r_vector[i],v[i][0], v[i][1])
 
 
 def get_obstacles(image, x, y):
@@ -123,36 +128,78 @@ def cut_out(Pressed, position, surface, surface_x, surface_y):
             x, y = position
             pg.draw.circle(surface, 'white', (-surface_x + x,
                                            -surface_y + y), r)
-    
-
-pg.init()
-screen = pg.display.set_mode((640, 480))
-clock = pg.time.Clock()
-BG_COLOR = pg.Color(255, 0, 0)
-screen.fill(BG_COLOR)
 
 # создание маски для частицы воды(общая для всех)
 side = 20
 WATER = pg.Surface((side, side), pg.SRCALPHA)
-r_vector, v = model.make_water(400, 600, -200, 0, 300)
 r_water = 4
 pg.draw.circle(WATER, [0, 0, 255], [int(side/2), int(side/2)], r_water)
 drop_mask = pg.mask.from_surface(WATER)
 
-def drip_sequance():
+# FIXME
+def drip_seq(screen,
+             destr, destr_x, destr_y, destr_mask, indestr,
+             indestr_x, indestr_y, indestr_mask,
+             r_vector, v,
+             paused):
     """
-    
-    Эта функция должна принимать уток, поверхности земли и трубы
-    Она вставляется в основной цикл maina
-    Сделать избавиться от всех глобалов в dripe
+    Это квинтиссенция всего что делает drip
+    parametrs:
+    Ультрамегасуперхорош
+    Я просто не знаю как функцию без параметров
+    передавать через файл к файл
     """
-    pass
+
     
+
+    destr_mask = pg.mask.from_surface(destr)
     
-    
+    if not paused:
+            r_vector, v = model.step(r_vector, v) # работа модели
+            cut_out(pg.mouse.get_pressed()[0], pg.mouse.get_pos(),
+                destr, destr_x, destr_y)
+        
+        
+    destr_mask = pg.mask.from_surface(destr)
+    # движение воды и работа с утками
+
+    for i in range(len(r_vector)):
+        x, y = r_vector[i]
+        if not paused:
+            Droplet.water_array.append(Droplet(x,y)) # добавляем новую поз.
+
+        # соударения с поверхностями
+        collide(destr_mask, destr_x, destr_y, r_vector, i, v)
+        collide(indestr_mask, indestr_x, indestr_y, r_vector, i, v)
+
+        for d in Duck.duck_array: # проверяем столновения с утками
+            if d.check(x, y, drop_mask):
+                d.water += 1
+                r_vector[i] = [-1000, -1000] # cсылаем в Сибирь
+                break
+
+    # обновление уток
+    for d in Duck.duck_array:
+        d.upgrade()
+        if d.level == 3:
+            Duck.duck_array.remove(d)
+
+    Droplet.draw_water(screen, paused) # рисуем воду
+
+    # рисуем землю и неземлю
+    screen.blit(destr, (destr_x, destr_y))
+    screen.blit(indestr, (indestr_x, indestr_y))
+
+    for d in Duck.duck_array: # рисуем уток
+            screen.blit(duck_image[d.level], (int(d.x), int(d.y)))
+
+    return(destr, destr_mask, r_vector, v)
+
 def example():
-    global r_vector, v, a
-    
+    global a # не обращайте внимания
+    paused = False
+    r_vector, v = model.make_water(400, 600, -200, 0, 30) # делаем массив воды
+
     screen = pg.display.set_mode((640, 480))
     clock = pg.time.Clock()
     BG_COLOR = pg.Color(255, 0, 0)
@@ -174,7 +221,6 @@ def example():
     ball_mask = pg.mask.from_surface(BALL)
     
     done = False
-    pause = False
 
     # инициализация уток
         
@@ -200,8 +246,6 @@ def example():
                     pg.draw.circle(destr, (255, 255, 255),
                                    (-destr_x + x, destr_y + y), 50)
 
-        cut_out(pg.mouse.get_pressed()[0], pg.mouse.get_pos(),
-                destr, destr_x, destr_y)
         
         # работа с мячом
         ball_vel *= .94
@@ -235,42 +279,11 @@ def example():
             print((alp*180/pi-90)*pi/180)
 
         screen.fill(BG_COLOR)
-        if not pause:
-            r_vector, v = model.step(r_vector, v) # работа модели
-        
-        
-        destr_mask = pg.mask.from_surface(destr)
-        # движение воды и работа с утками
-        for i in range(len(r_vector)):
-            
-            x, y = r_vector[i]
-            Droplet.water_array.append(Droplet(x,y)) # добавляем новую поз.
-
-            # соударения с поверхностями
-            collide(destr_mask, destr_x, destr_y, i)
-            collide(indestr_mask, indestr_x, indestr_y, i)
-
-            for d in Duck.duck_array: # проверяем столновения с утками
-                if d.check(x, y, drop_mask):
-                    d.water += 1
-                    r_vector[i] = [-1000, -1000] # cсылаем в Сибирь
-                    break
-
-        # обновление уток
-        for d in Duck.duck_array:
-            d.upgrade()
-            if d.level == 3:
-                Duck.duck_array.remove(d)
-
-        Droplet.draw_water(screen) # рисуем воду
-
-        # рисуем землю и неземлю
-        screen.blit(destr, (destr_x, destr_y))
-        screen.blit(indestr, (indestr_x, indestr_y))
-
-        for d in Duck.duck_array: # рисуем уток
-                screen.blit(duck_image[d.level], (int(d.x), int(d.y)))
-
+        destr, destr_mask, r_vector, v = drip_seq(
+            screen, destr, destr_x, destr_y, destr_mask,
+            indestr,indestr_x, indestr_y, indestr_mask,
+            r_vector, v,
+            paused)
         screen.blit(BALL, ballrect) # рисуем мяч
 
         pg.display.flip()

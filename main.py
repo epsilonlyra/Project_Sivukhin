@@ -1,8 +1,11 @@
 import pygame
 from pygame.draw import *
 from buttons import *
-
-
+import drip
+import model
+from drip import drip_seq, get_obstacles
+import ducks
+from ducks import *
 
 WIDTH = 700
 HEIGHT = 800
@@ -16,7 +19,7 @@ clock = pygame.time.Clock()
 
 
 finished = False
-paused = True
+paused = False
 
 def quit():
     global finished
@@ -67,11 +70,31 @@ class ButtonManager():
     
 ButMan = ButtonManager()
 
+destr, destr_x, destr_y, destr_mask = get_obstacles(
+        fetch_file('pictures', 'TEST.png','TEST'), 340, 240)
+    
+indestr, indestr_x, indestr_y, indestr_mask = get_obstacles(
+    fetch_file('pictures', 'TEST1.png','TEST'), 340, 440)
+
+r_vector, v = model.make_water(400, 600, -200, 0, 200) # делаем массив воды
+
+Duck.duck_array.append(Duck(ducks.circle_function(200, 200, 10), 30, 200, 200,
+                           using_mask = True)) # сделали утку
+
 while not finished:
-    screen.fill('white')
+    screen.fill('red')
+    
+    #Cat.draw(screen) # очень ресурсозатратно 
+    #Cat.angle += 2
+    
+    destr, destr_mask, r_vector, v = drip_seq(
+        screen, destr, destr_x, destr_y, destr_mask,
+        indestr,indestr_x, indestr_y, indestr_mask,
+        r_vector, v,
+        paused)
+    
     ButMan.show_buttons()
-    Cat.draw(screen)
-    Cat.angle += 2
+    
     pygame.display.update()
     clock.tick(FPS)
     
