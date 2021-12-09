@@ -4,6 +4,7 @@ import buttons
 
 
 class Duck:
+    duck_array = []
     def __init__(self, function, max_drop, x=-1000, y=-1000, using_mask = False):
         '''
         function - функция, которая принимает координаты воды и возвращает
