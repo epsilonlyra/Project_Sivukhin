@@ -13,6 +13,8 @@ def fetch_file(directory, filename, *directories, type = None):
     if type == 'other':
         return (os.path.join(path, filename))
 
+WIDTH = 700
+HEIGHT = 800
 
 class Picture():
     """
@@ -62,7 +64,7 @@ class Picture():
 
 class Button(Picture):
     
-    def __init__(self, x, y, image, func, *size):
+    def __init__(self, x, y, image, func, *size, argument =  None):
         """
         Инициализация класса Picture
         image : pygame.surface object который будет рисоватся
@@ -74,12 +76,16 @@ class Button(Picture):
         
         self.func = func
         super().__init__(x, y, image, *size)
+        self.argument = argument
 
     def check_click(self, event):
         x = event.pos[0]
         y = event.pos[1]
         if self.image_rect.collidepoint(x, y):
-            self.func()
+            if self.argument:
+                self.func(self.argument)
+            else:
+                self.func()
     
 
 icon = fetch_file('pictures', 'icon.jpg') # icon for app
@@ -97,6 +103,16 @@ font = pygame.font.SysFont(None, 30)
 button_play_surf = font.render('Play', True, 'red', 'yellow')
 button_pause_surf = font.render('Pause', True, 'red', 'black')
 button_quit_surf = font.render('Quit', True, 'red', 'black')
+button_replay_surf = font.render('Retry', True, 'red', 'black')
+level_button_surf = []
+for i in range(1, 4):
+    level_button_surf.append(font.render('Level' + str(i), True, 'red',
+                                         'black'))
+BACKGROUND = (fetch_file('pictures', 'lab_corp.png'))
+BACKGROUND = pygame.transform.scale(
+            BACKGROUND, (WIDTH, HEIGHT))
+
+
 
 
         
