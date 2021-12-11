@@ -22,7 +22,7 @@ clock = pygame.time.Clock()
 finished = False
 paused = True
 in_menu = True
-loaded_level = 1
+loaded_level = 2
 
 def quit():
     global finished
@@ -44,17 +44,19 @@ def load_level(level):
     global destr, destr_x, destr_y, destr_mask, \
     indestr, indestr_x, indestr_y, indestr_mask, \
     r_vector, v,\
-    in_menu, loaded_level
+    in_menu, \
+    ButMan
 
     in_menu = False
-    loaded_level = level
     
-    
+
+    ButtonManager.updatecurlevel(level)
+   
     destr, destr_x, destr_y, destr_mask = levels[level-1]['destr']()
 
     indestr, indestr_x, indestr_y, indestr_mask = levels[level-1]['indestr']()
     
-    r_vector, v = model.make_water(400, 600, -200, 0, 200) # делаем массив воды
+    r_vector, v = model.make_water(400, 600, -200, 0, 120) # делаем массив воды
 
     Duck.duck_array = levels[level-1]['ducks']()
     
@@ -63,8 +65,6 @@ def load_level(level):
 
 class ButtonManager():
 
-    global paused, WIDTH, HEIGHT, in_menu
-    
     play_button =  Button(WIDTH / 2, HEIGHT /  2, button_play_surf, playpause)
     pause_button =  Button(WIDTH - 30, 30 , button_pause_surf, playpause)
     quit_button = Button(WIDTH / 2, HEIGHT /  2 + 30, button_quit_surf,
@@ -75,12 +75,20 @@ class ButtonManager():
     for i in range(len(level_button_surf)):
         level_buttons.append(Button(WIDTH / 2 - 120 + 120 * i, HEIGHT /  2,
                               level_button_surf[i],
-                              load_level, argument = i + 1))
+                              load_level, argument=i + 1))
     
-    Pause_menu_buttons = [quit_button, play_button, replay_button]
+    Pause_menu_buttons = [quit_button, play_button]
     Game_buttons = [pause_button, replay_button]
     Menu_buttons = level_buttons
     
+    def updatecurlevel(loaded_level):
+        ButtonManager.replay_button = Button(40, 40, button_replay_surf,
+                                             load_level, argument=loaded_level)
+        # обновляем соответсвующие элементы массива
+        ButtonManager.Game_buttons[1] = ButtonManager.replay_button
+        #ButtonManager.Pause_menu_buttons[2] = ButtonManager.replay_button        
+        
+        
     def show_buttons(self):
         if in_menu:
             Active_buttons = ButtonManager.Menu_buttons
@@ -112,13 +120,11 @@ class ButtonManager():
     
 ButMan = ButtonManager()
 
-cunted_FPS = 0
 while not finished:
     counted_FPS = clock.get_fps()
     screen.fill('red')
     if in_menu:
         screen.blit(BACKGROUND, (0,0))
-    
     
     if not in_menu:
         destr, destr_mask, r_vector, v = drip_seq(
@@ -126,9 +132,7 @@ while not finished:
             indestr,indestr_x, indestr_y, indestr_mask,
             r_vector, v,
             paused)
-    
-    #screen.blit(level_screen, (0, 0))
-    
+
     ButMan.show_buttons()
     
     pygame.display.update()
