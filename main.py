@@ -6,12 +6,12 @@ import model
 from drip import drip_seq, get_obstacles, Droplet
 import ducks
 from ducks import *
-from level_config import levels
+import level_config
+from level_config import *
 
 WIDTH = 700
 HEIGHT = 800
 FPS = 30
-
 
 pygame.display.set_icon(icon)
 pygame.display.set_caption(('Проект Сивухин'))
@@ -50,13 +50,13 @@ def load_level(level):
     loaded_level = level
     
     
-    destr, destr_x, destr_y, destr_mask = levels[level-1]['destr']
+    destr, destr_x, destr_y, destr_mask = levels[level-1]['destr']()
 
-    indestr, indestr_x, indestr_y, indestr_mask = levels[level-1]['indestr']
+    indestr, indestr_x, indestr_y, indestr_mask = levels[level-1]['indestr']()
     
     r_vector, v = model.make_water(400, 600, -200, 0, 200) # делаем массив воды
 
-    Duck.duck_array = levels[level-1]['ducks']
+    Duck.duck_array = levels[level-1]['ducks']()
     
     Droplet.water_array = [] # уничтожили все капли
 
