@@ -62,7 +62,7 @@ def circle_function(x_duck, y_duck, r):
 
 side = 40
 r = 10
-mipt = ['dgap', 'fpmi']
+mipt = ['dgap', 'fpmi', 'faki', 'falt', 'frtk', 'fupm', 'fpfe']
 duck_image = {}
 for f in mipt:
     duck_image[f] = []
