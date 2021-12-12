@@ -198,6 +198,7 @@ def drip_seq(screen,
         d.upgrade()
         if d.level == 3:
             Duck.duck_array.remove(d)
+            ducks.record_destroying_duck(d.faculty)
 
     Droplet.draw_water(screen, paused) # рисуем воду
 
