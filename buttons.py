@@ -100,13 +100,14 @@ pygame.font.init()
 
 font = pygame.font.SysFont(None, 30)
 
-button_play_surf = font.render('Play', True, 'red', 'yellow')
-button_pause_surf = font.render('Pause', True, 'red', 'black')
-button_quit_surf = font.render('Quit', True, 'red', 'black')
-button_replay_surf = font.render('Retry', True, 'red', 'black')
+button_play_surf = font.render('Play', True, 'red', 'green')
+button_pause_surf = font.render('Pause', True, 'green')
+button_quit_surf = font.render('Quit', True, 'red')
+button_replay_surf = font.render('Retry', True, 'green')
+button_sound_surf = font.render('Sound', True, 'green')
 level_button_surf = []
 for i in range(1, 4):
-    level_button_surf.append(font.render('Level' + str(i), True, 'red',
+    level_button_surf.append(font.render('Level' + str(i), False, 'green',
                                          'black'))
 BACKGROUND = (fetch_file('pictures', 'lab_corp.png'))
 BACKGROUND = pygame.transform.scale(
