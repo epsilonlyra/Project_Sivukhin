@@ -7,6 +7,16 @@ import math
 import ducks
 from ducks import Duck
 from ducks import duck_image
+import random
+
+sleep=0
+
+def draw_polygon1(screen, a, b, n):
+    A = [(2*i*math.pi/n) for i in range(n)]
+    pnts=[]
+    for ugol in A:
+        pnts.append( (a+30*math.sin(ugol),b-60-30*math.cos(ugol)) )
+    pg.draw.polygon(screen, (255, 255, 255), pnts)
 
 class Droplet():
     """
@@ -124,10 +134,15 @@ def cut_out(Pressed, position, surface, surface_x, surface_y):
     Вырезаем область
     """
     r = 40
+    global sleep 
     if Pressed: # если мышь зажата удаляет область
             x, y = position
-            pg.draw.circle(surface, 'white', (-surface_x + x,
-                                           -surface_y + y), r)
+           
+            if (sleep>=2):
+                sleep=0
+                draw_polygon1(surface, -surface_x + x, surface_y + y, random.randint(5,12))
+            else:
+                sleep=sleep+1
 
 # создание маски для частицы воды(общая для всех)
 side = 20
@@ -243,8 +258,7 @@ def example():
                      ball_vel.y = 5
                 elif event.key == pg.K_z: # удаления по кнопке
                     x, y = pg.mouse.get_pos()
-                    pg.draw.circle(destr, (255, 255, 255),
-                                   (-destr_x + x, destr_y + y), 50)
+                    draw_polygon1(destr, -destr_x + x, destr_y + y, random.randint(3,7))
 
         
         # работа с мячом
