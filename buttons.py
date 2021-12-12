@@ -64,7 +64,7 @@ class Picture():
 
 class Button(Picture):
     
-    def __init__(self, x, y, image, func, *size, argument =  None):
+    def __init__(self, x, y, image, func = None, *size, argument =  None):
         """
         Инициализация класса Picture
         image : pygame.surface object который будет рисоватся

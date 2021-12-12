@@ -9,14 +9,19 @@ from ducks import Duck
 from ducks import duck_image
 import random
 
-sleep=0
 
 def draw_polygon1(screen, a, b, n):
+    """
+    Рисует на поверхности белый многоугольник
+    """
+    
     A = [(2*i*math.pi/n) for i in range(n)]
     pnts=[]
-    for ugol in A:
-        pnts.append( (a+30*math.sin(ugol),b-60-30*math.cos(ugol)) )
-    pg.draw.polygon(screen, (255, 255, 255), pnts)
+    length = 30
+    for angle in A:
+        pnts.append( (a + length*math.sin(angle),
+                      b - 2* length - length*math.cos(angle)))
+    pg.draw.polygon(screen, 'white', pnts)
 
 class Droplet():
     """
@@ -129,20 +134,20 @@ def get_obstacles(image, x, y):
     image_mask = pg.mask.from_surface(image)
     return(image, image_x, image_y, image_mask)
 
-def cut_out(Pressed, position, surface, surface_x, surface_y):
+def cut_out(Pressed, position, surface, surface_x, surface_y, shape = None):
     """
     Вырезаем область
     """
     r = 40
-    global sleep 
     if Pressed: # если мышь зажата удаляет область
-            x, y = position
-           
-            if (sleep>=2):
-                sleep=0
-                draw_polygon1(surface, -surface_x + x, surface_y + y, random.randint(5,12))
-            else:
-                sleep=sleep+1
+        x, y = position
+        if shape == None:
+            draw_polygon1(surface, -surface_x + x, surface_y + y, 3)
+    
+        if shape =='circle':
+            pg.draw.circle(surface, 'white', (-surface_x + x,
+                                           -surface_y + y), r)
+            
 
 # создание маски для частицы воды(общая для всех)
 side = 20
@@ -156,7 +161,8 @@ def drip_seq(screen,
              destr, destr_x, destr_y, destr_mask, indestr,
              indestr_x, indestr_y, indestr_mask,
              r_vector, v,
-             paused):
+             paused,
+             shape = 'circle'):
     """
     Это квинтиссенция всего что делает drip
     parametrs:
@@ -172,7 +178,7 @@ def drip_seq(screen,
     if not paused:
             r_vector, v = model.step(r_vector, v) # работа модели
             cut_out(pg.mouse.get_pressed()[0], pg.mouse.get_pos(),
-                destr, destr_x, destr_y)
+                destr, destr_x, destr_y, shape = shape)
         
         
     destr_mask = pg.mask.from_surface(destr)

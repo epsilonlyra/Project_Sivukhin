@@ -58,6 +58,16 @@ def control_music():
         pygame.mixer.music.unpause()
         music_banned = False
 
+shape = 'circle'
+
+def control_shape():
+    global shape
+        
+    if shape == None:
+        shape ='circle'
+    else:
+        shape = None
+
 def load_level(level):
     
     global destr, destr_x, destr_y, destr_mask, \
@@ -67,7 +77,7 @@ def load_level(level):
     ButMan
 
     in_menu = False
-    pygame.mixer.music.fadeout(2000)
+    pygame.mixer.music.fadeout(10000)
 
     ButtonManager.updatecurlevel(level)
    
@@ -154,7 +164,7 @@ while not finished:
             screen, destr, destr_x, destr_y, destr_mask,
             indestr,indestr_x, indestr_y, indestr_mask,
             r_vector, v,
-            paused)
+            paused, shape = shape)
 
     ButMan.show_buttons()
     
@@ -166,6 +176,9 @@ while not finished:
             finished = True
         if event.type == pygame.MOUSEBUTTONDOWN:
             ButMan.check_click()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_c:
+                control_shape()
         
 pygame.quit()
 print(counted_FPS)
