@@ -22,7 +22,7 @@ def level1_indestr():
 
 def level1_ducks():
     return([Duck(ducks.circle_function(200, 200, 10), 30, 400, 200,
-                           using_mask = True)])
+                           using_mask = True, faculty = 'dgap')])
 
 
 level1 = dict({'destr' : level1_destr, 'indestr' : level1_indestr,

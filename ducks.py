@@ -5,7 +5,7 @@ import buttons
 
 class Duck:
     duck_array = []
-    def __init__(self, function, max_drop, x=-1000, y=-1000, using_mask = False):
+    def __init__(self, function, max_drop, x=-1000, y=-1000, using_mask = False, faculty = 'fpmi'):
         '''
         function - функция, которая принимает координаты воды и возвращает
         1, если частица попала в утку
@@ -21,9 +21,11 @@ class Duck:
         self.max = max_drop
         self.x = x
         self.y = y
-        self.surf = duck_image[0]
+        self.surf = duck_image[faculty][0]
         self.mask = pg.mask.from_surface(self.surf)
         self.using_mask = using_mask
+        self.faculty = faculty
+        
                                          
     def check(self, x, y, drop_mask):
         '''
@@ -46,7 +48,7 @@ class Duck:
             self.level = 2
         elif self.water >= 1/3*self.max:
             self.level = 1
-        self.surf = duck_image[self.level]
+        self.surf = duck_image[self.faculty][self.level]
         self.mask = self.mask = pg.mask.from_surface(self.surf)
 
 
@@ -60,11 +62,14 @@ def circle_function(x_duck, y_duck, r):
 
 side = 40
 r = 10
-duck_image = []
-for i in range(4):
-    duck_pick = buttons.Picture(0, 0, buttons.fetch_file('pictures', 'fpmi.png'),
-                                40+20*i, 40+20*i)
-    duck_image.append(duck_pick.image)
+mipt = ['dgap', 'fpmi']
+duck_image = {}
+for f in mipt:
+    duck_image[f] = []
+    for i in range(4):
+        duck_pick = buttons.Picture(0, 0, buttons.fetch_file('pictures', f+'.png'),
+                                    40+20*i, 40+20*i)
+        duck_image[f].append(duck_pick.image)
 
 
 

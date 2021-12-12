@@ -191,7 +191,7 @@ def drip_seq(screen,
     screen.blit(indestr, (indestr_x, indestr_y))
 
     for d in Duck.duck_array: # рисуем уток
-            screen.blit(duck_image[d.level], (int(d.x), int(d.y)))
+            screen.blit(duck_image[d.faculty][d.level], (int(d.x), int(d.y)))
 
     return(destr, destr_mask, r_vector, v)
 
