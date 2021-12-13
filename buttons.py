@@ -1,13 +1,19 @@
 import pygame
 import os
 
-def fetch_file(directory, filename, *directories, type = None):
+def fetch_file(directory, filename, *directories, type = None,
+               x_size = None,y_size = None):
     path = os.path.abspath(directory)
     for directory in directories:
         path = os.path.join(path, directory)
 
     if type ==  None:
-        return pygame.image.load((os.path.join(path, filename)))
+        if x_size or y_size:
+            surf = pygame.image.load((os.path.join(path, filename)))
+            surf = pygame.transform.scale(surf, (x_size, y_size))
+            return surf
+        else:
+            return pygame.image.load((os.path.join(path, filename)))
     if type == 'music':
         return pygame.mixer.music.load((os.path.join(path, filename)))
     if type == 'other':

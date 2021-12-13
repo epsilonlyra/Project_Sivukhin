@@ -28,10 +28,12 @@ def level1_ducks():
 level1 = dict({'destr' : level1_destr, 'indestr' : level1_indestr,
               'ducks' : level1_ducks})
 
+# level2 config
+
 def level2_destr():
     return(
         get_obstacles(
-            fetch_file('pictures', 'destr.png','levels', 'level2'), 340, 240))
+            fetch_file('pictures', 'destr.png','levels', 'level2', x_size = 800, y_size = 800), 400, 400))
 
 def level2_indestr():
     return(
@@ -39,10 +41,32 @@ def level2_indestr():
         fetch_file('pictures', 'indestr.png','levels', 'level2'), 340, 440))
 
 def level2_ducks():
-    return([Duck(ducks.circle_function(200, 200, 10), 30, 200, 200,
-                           using_mask = True)])
+    return([Duck(None, 30, 100, 350, using_mask = True),
+            Duck(None, 30, 600, 350, using_mask = True, faculty = 'fupm'),
+            Duck(None, 30, 610, 580, using_mask = True, faculty = 'fpfe')])
 
 level2 = dict({'destr' : level2_destr, 'indestr' : level2_indestr,
               'ducks' : level2_ducks})
 
-levels = [level1, level2]
+# level3 config
+
+def level3_destr():
+    return(
+        get_obstacles(
+            fetch_file('pictures', 'destr.png','levels', 'level3', x_size = 800, y_size = 800), 400, 400))
+
+def level3_indestr():
+    return(
+        get_obstacles(
+        fetch_file('pictures', 'indestr.png','levels', 'level3', x_size = 800, y_size = 800), 400, 400))
+
+def level3_ducks():
+    return([Duck(None, 30, 350, 350, using_mask = True),
+            Duck(None, 40, 230, 390, using_mask = True, faculty = 'dgap'),
+            Duck(None, 30, 450, 650, using_mask = True, faculty = 'falt')])
+
+level3 = dict({'destr' : level3_destr, 'indestr' : level3_indestr,
+              'ducks' : level3_ducks})
+
+
+levels = [level1, level2, level3]

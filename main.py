@@ -85,7 +85,7 @@ def load_level(level):
 
     indestr, indestr_x, indestr_y, indestr_mask = levels[level-1]['indestr']()
     
-    r_vector, v = model.make_water(400, 600, -200, 0, 120) # делаем массив воды
+    r_vector, v = model.make_water(400, 600, -200, 0, 220) # делаем массив воды
     # первые 4 числа определяют границы, последнее - количество частиц
 
     Duck.duck_array = levels[level-1]['ducks']()
@@ -95,9 +95,9 @@ def load_level(level):
 
 class ButtonManager():
 
-    play_button =  Button(WIDTH / 2, HEIGHT /  2, button_play_surf, playpause)
+    play_button =  Button(WIDTH / 2, HEIGHT /  2 - 300, button_play_surf, playpause)
     pause_button =  Button(WIDTH - 40, 30 , button_pause_surf, playpause)
-    quit_button = Button(WIDTH / 2, HEIGHT /  2 + 30, button_quit_surf,
+    quit_button = Button(WIDTH / 2, HEIGHT /  2 - 270, button_quit_surf,
                          go_to_menu)
     replay_button = Button(40, 30, button_replay_surf, load_level,
                            argument=loaded_level)
@@ -131,7 +131,7 @@ class ButtonManager():
         elif paused:
             Active_buttons = ButtonManager.Pause_menu_buttons
             pygame.draw.rect(screen, 'green', (round(WIDTH/2) - 60,
-                             round(HEIGHT/2) - 15, 120, 60), border_radius=20)
+                             round(HEIGHT/2) - 315, 120, 60), border_radius=20)
         else:
             Active_buttons = ButtonManager.Game_buttons
             

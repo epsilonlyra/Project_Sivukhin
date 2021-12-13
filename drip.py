@@ -156,6 +156,11 @@ r_water = 4
 pg.draw.circle(WATER, [0, 0, 255], [int(side/2), int(side/2)], r_water)
 drop_mask = pg.mask.from_surface(WATER)
 
+mmm1 =  fetch_file('pictures','lop.png')
+mmm2 = fetch_file('pictures','none.png')
+mmm1.set_colorkey('white')
+mmm2.set_colorkey('white')
+
 # FIXME
 def drip_seq(screen,
              destr, destr_x, destr_y, destr_mask, indestr,
@@ -206,19 +211,12 @@ def drip_seq(screen,
             Duck.duck_array.remove(d)
             ducks.record_destroying_duck(d.faculty)
 
-    mmm1 = pg.image.load("pictures/lop.png").convert_alpha()
-    mmm2 = pg.image.load("pictures/none.png").convert_alpha()
-    mm_mask = pg.mask.from_surface(mmm1)
-    #mm_rect = mmm1.get_rect()
-    mm = mmm1
-    mmm1.set_colorkey('white')
-    mmm2.set_colorkey('white')
-    
     mx, my = pg.mouse.get_pos()
-    offset_m = (destr_x - mx, destr_y - my)
-
-    resultt = mm_mask.overlap(destr_mask, offset_m)
-    if resultt:
+    try:
+        resultt = destr_mask.get_at((mx, my))
+    except Exception:
+        resultt = 0
+    if resultt ==1 and not paused:
         pg.mouse.set_visible(False)
         mm = mmm1    
     else:
