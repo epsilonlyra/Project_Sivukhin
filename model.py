@@ -21,7 +21,7 @@ gamma = 7
 
 death = False
 
-def W(x, y, h ):
+def W(x, y, h):
     '''
     Gausssian Smoothing kernel (2D)
     x, y - вектора координат
@@ -49,7 +49,7 @@ def W(x, y, h ):
     return w
 	
 	
-def gradW(x, y, h ):
+def gradW(x, y, h):
     '''
     Gradient of the Gausssian Smoothing kernel (2D)
     x, y - вектора координат
@@ -115,10 +115,12 @@ def Pressure(rho):
     '''
     Возвращает давление
     '''
-
-    #p = rho_0 * speed**2 * ((rho/rho_0)**gamma - 1) / gamma
+    
     p = k * rho**(1+1/power)
-    #p = speed**2*(rho-rho_0)
+
+    # в принципе можно было бы использовать другие уравнения состояния:
+    # p = rho_0 * speed**2 * ((rho/rho_0)**gamma - 1) / gamma    
+    # p = speed**2*(rho-rho_0)
 
     return p
 
@@ -151,8 +153,7 @@ def reflect(vx, vy, alpha):
     k = 1
     ux = -u * math.sin(alpha) - k*w * math.cos(alpha)
     uy = u * math.cos(alpha) - k*w * math.sin(alpha)
-    #if True:
-    #    uu = 
+
     return ux, uy
 
 

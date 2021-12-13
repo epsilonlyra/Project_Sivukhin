@@ -86,6 +86,7 @@ def load_level(level):
     indestr, indestr_x, indestr_y, indestr_mask = levels[level-1]['indestr']()
     
     r_vector, v = model.make_water(400, 600, -200, 0, 120) # делаем массив воды
+    # первые 4 числа определяют границы, последнее - количество частиц
 
     Duck.duck_array = levels[level-1]['ducks']()
     

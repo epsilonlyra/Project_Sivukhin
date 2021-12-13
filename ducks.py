@@ -1,7 +1,7 @@
 import pygame as pg
 import json
 import buttons
-
+import os
 
 
 class Duck:
@@ -93,7 +93,7 @@ duck_image = {}
 for f in mipt:
     duck_image[f] = []
     for i in range(4):
-        duck_pick = buttons.Picture(0, 0, buttons.fetch_file('pictures', f+'.png'),
+        duck_pick = buttons.Picture(0, 0, buttons.fetch_file(os.path.join('pictures', 'ducks'), f + '.png'),
                                     40+20*i, 40+20*i)
         duck_image[f].append(duck_pick.image)
 
