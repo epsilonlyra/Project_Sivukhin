@@ -156,10 +156,10 @@ r_water = 4
 pg.draw.circle(WATER, [0, 0, 255], [int(side/2), int(side/2)], r_water)
 drop_mask = pg.mask.from_surface(WATER)
 
-mmm1 =  fetch_file('pictures','lop.png')
-mmm2 = fetch_file('pictures','none.png')
-mmm1.set_colorkey('white')
-mmm2.set_colorkey('white')
+shovel =  fetch_file('pictures','lop.png')
+none = fetch_file('pictures','none.png')
+shovel.set_colorkey('white')
+none.set_colorkey('white')
 
 # FIXME
 def drip_seq(screen,
@@ -212,16 +212,22 @@ def drip_seq(screen,
             ducks.record_destroying_duck(d.faculty)
 
     mx, my = pg.mouse.get_pos()
+    
     try:
-        resultt = destr_mask.get_at((mx, my))
-    except Exception:
+        resultt =  (not indestr_mask.get_at((mx, my))) \
+            and destr_mask.get_at((mx, my))
+    except Exception: # можно выйти за рамки
         resultt = 0
-    if resultt ==1 and not paused:
-        pg.mouse.set_visible(False)
-        mm = mmm1    
-    else:
-        pg.mouse.set_visible(True)
-        mm = mmm2
+
+    mouse = none
+    if not paused:
+        if resultt == 1:
+            pg.mouse.set_visible(False)
+            mouse = shovel 
+        else:
+            pg.mouse.set_visible(True)
+            mouse = none
+        
         
 
     Droplet.draw_water(screen, paused) # рисуем воду
@@ -229,7 +235,7 @@ def drip_seq(screen,
     # рисуем землю и неземлю
     screen.blit(destr, (destr_x, destr_y))
     screen.blit(indestr, (indestr_x, indestr_y))
-    screen.blit(mm, (mx, my))
+    screen.blit(mouse, (mx, my - mouse.get_height()))
 
     for d in Duck.duck_array: # рисуем уток
             screen.blit(duck_image[d.faculty][d.level], (int(d.x), int(d.y)))

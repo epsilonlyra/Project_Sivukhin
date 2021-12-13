@@ -62,8 +62,8 @@ def level3_indestr():
 
 def level3_ducks():
     return([Duck(None, 30, 350, 350, using_mask = True),
-            Duck(None, 40, 230, 390, using_mask = True, faculty = 'dgap'),
-            Duck(None, 30, 450, 650, using_mask = True, faculty = 'falt')])
+            Duck(None, 40, 220, 520, using_mask = True, faculty = 'dgap'),
+            Duck(None, 30, 450, 570, using_mask = True, faculty = 'falt')])
 
 level3 = dict({'destr' : level3_destr, 'indestr' : level3_indestr,
               'ducks' : level3_ducks})
