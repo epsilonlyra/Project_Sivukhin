@@ -125,6 +125,8 @@ class ButtonManager():
     def show_buttons(self):
         if in_menu:
             Active_buttons = ButtonManager.Menu_buttons
+            pygame.mouse.set_visible(True)
+
             
         elif paused:
             Active_buttons = ButtonManager.Pause_menu_buttons

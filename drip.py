@@ -206,11 +206,32 @@ def drip_seq(screen,
             Duck.duck_array.remove(d)
             ducks.record_destroying_duck(d.faculty)
 
+     mmm1 = pg.image.load("lop.png").convert_alpha()
+    mmm2 = pg.image.load("none.png").convert_alpha()
+    mm_mask = pg.mask.from_surface(mmm1)
+    #mm_rect = mmm1.get_rect()
+    mm = mmm1
+    mmm1.set_colorkey('white')
+    mmm2.set_colorkey('white')
+    
+    mx, my = pg.mouse.get_pos()
+    offset_m = (destr_x - mx, destr_y - my)
+
+    resultt = mm_mask.overlap(destr_mask, offset_m)
+    if resultt:
+        pg.mouse.set_visible(False)
+        mm = mmm1    
+    else:
+        pg.mouse.set_visible(True)
+        mm = mmm2
+        
+
     Droplet.draw_water(screen, paused) # рисуем воду
 
     # рисуем землю и неземлю
     screen.blit(destr, (destr_x, destr_y))
     screen.blit(indestr, (indestr_x, indestr_y))
+    screen.blit(mm, (mx, my))
 
     for d in Duck.duck_array: # рисуем уток
             screen.blit(duck_image[d.faculty][d.level], (int(d.x), int(d.y)))
