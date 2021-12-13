@@ -8,6 +8,17 @@ pygame.init()
 pygame.display.init()
 screen = pygame.display.set_mode((10, 10)) # это нужно чтобы работал convert
 
+def create_level(number, x, y, change_size = False, x_picture = None, y_picture = None,):
+    num = str(number)
+    if change_size:
+        get_obstacles(fetch_file('pictures', 'destr.png','levels', 'level'+num,
+                                 x_size = x_picture, y_size = y_picture), x, y)
+    else:
+        destr = get_obstacles(fetch_file('pictures', 'destr.png', 'levels', 'level'+num), x, y)
+        indestr = get_obstacles(fetch_file('pictures', 'indestr.png','levels', 'level'+num), x, y)
+    duck_r
+    
+
 # level1 config
 
 def level1_destr():
