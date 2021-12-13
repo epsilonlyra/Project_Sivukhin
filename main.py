@@ -155,11 +155,22 @@ class ButtonManager():
     
 ButMan = ButtonManager()
 
+brick_wall = buttons.fetch_file('pictures', 'wall.png')
 while not finished:
     counted_FPS = clock.get_fps()
-    screen.fill('red')
+    screen.blit(brick_wall, (0, 0))
     if in_menu:
         screen.blit(BACKGROUND, (0,0))
+
+        # рисуем собранные факультеты
+        faculties = ducks.get_faculties()
+        i = 0
+        while i < len(faculties):
+            f = faculties[i]
+            screen.blit(ducks.duck_image[f][2], (10 + 90*i, 10))
+            i += 1
+            
+        
         
     
     if not in_menu:

@@ -19,7 +19,8 @@ dt = 0.2
 
 gamma = 7
 
-death = False
+death = False   # переключает kernel с экспоненты на кубический сплайн
+                # при этом производительность падает до 0
 
 def W(x, y, h):
     '''
@@ -159,7 +160,7 @@ def reflect(vx, vy, alpha):
 
 
 
-
+# пример движения воды
 def example():
 
     pygame.init()

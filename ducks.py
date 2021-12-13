@@ -85,6 +85,16 @@ def record_destroying_duck(faculty):
             data.append(faculty)
     with open('record.json', 'w') as f:
         json.dump(data, f)
+
+def get_faculties():
+    '''
+    Возвращает массив из json
+    '''
+    with open('record.json') as f:
+        data = json.load(f)
+    with open('record.json', 'w') as f:
+        json.dump(data, f)
+    return data
     
 
 # создание картинок для уток
