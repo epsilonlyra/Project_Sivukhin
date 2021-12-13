@@ -206,8 +206,8 @@ def drip_seq(screen,
             Duck.duck_array.remove(d)
             ducks.record_destroying_duck(d.faculty)
 
-     mmm1 = pg.image.load("lop.png").convert_alpha()
-    mmm2 = pg.image.load("none.png").convert_alpha()
+    mmm1 = pg.image.load("pictures/lop.png").convert_alpha()
+    mmm2 = pg.image.load("pictures/none.png").convert_alpha()
     mm_mask = pg.mask.from_surface(mmm1)
     #mm_rect = mmm1.get_rect()
     mm = mmm1
