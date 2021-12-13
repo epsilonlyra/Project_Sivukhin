@@ -1,5 +1,6 @@
-import pygame
 import os
+
+import pygame
 
 def fetch_file(directory, filename, *directories, type = None,
                x_size = None,y_size = None):
@@ -118,6 +119,8 @@ for i in range(1, 4):
 BACKGROUND = (fetch_file('pictures', 'lab_corp.png'))
 BACKGROUND = pygame.transform.scale(
             BACKGROUND, (WIDTH, HEIGHT))
+
+brick_wall = fetch_file('pictures', 'wall.png')
 
 
 

@@ -10,15 +10,15 @@ from ducks import duck_image
 import random
 
 
-def draw_polygon1(screen, a, b, n):
+def draw_polygon1(screen, a, b, n): # FIXME bad naming
     """
     Рисует на поверхности белый многоугольник
     """
     
-    A = [(2*i*math.pi/n) for i in range(n)]
+    angles_array = [(2*i*math.pi/n) for i in range(n)]
     pnts=[]
     length = 30
-    for angle in A:
+    for angle in angles_array:
         pnts.append( (a + length*math.sin(angle),
                       b - 2* length - length*math.cos(angle)))
     pg.draw.polygon(screen, 'white', pnts)
@@ -161,7 +161,6 @@ none = fetch_file('pictures','none.png')
 shovel.set_colorkey('white')
 none.set_colorkey('white')
 
-# FIXME
 def drip_seq(screen,
              destr, destr_x, destr_y, destr_mask, indestr,
              indestr_x, indestr_y, indestr_mask,
@@ -209,7 +208,7 @@ def drip_seq(screen,
         if d.level == 3:
             Duck.duck_array.remove(d)
             ducks.record_destroying_duck(d.faculty)
-
+    """
     mx, my = pg.mouse.get_pos()
     
     try:
@@ -226,6 +225,7 @@ def drip_seq(screen,
         else:
             pg.mouse.set_visible(True)
             mouse = none
+    """
         
         
 
@@ -234,7 +234,7 @@ def drip_seq(screen,
     # рисуем землю и неземлю
     screen.blit(destr, (destr_x, destr_y))
     screen.blit(indestr, (indestr_x, indestr_y))
-    screen.blit(mouse, (mx, my - mouse.get_height()))
+    #screen.blit(mouse, (mx, my - mouse.get_height()))
 
     for d in Duck.duck_array: # рисуем уток
             screen.blit(duck_image[d.faculty][d.level], (int(d.x), int(d.y)))
