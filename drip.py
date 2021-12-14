@@ -1,16 +1,20 @@
-import pygame as pg
-import model
-from pygame.math import Vector2
-from math import atan2, degrees, pi
-from buttons import fetch_file
 import math
+from math import atan2, degrees, pi
+import random
+
+import pygame as pg
+from pygame.math import Vector2
+
+import model
+
+from buttons import fetch_file
+
 import ducks
 from ducks import Duck
 from ducks import duck_image
-import random
 
 
-def draw_polygon1(screen, a, b, n): # FIXME bad naming
+def draw_polygon1(screen, a, b, n): # FIXME bad naming and bad working
     """
     Рисует на поверхности белый многоугольник
     """
@@ -134,14 +138,14 @@ def get_obstacles(image, x, y):
     image_mask = pg.mask.from_surface(image)
     return(image, image_x, image_y, image_mask)
 
-def cut_out(Pressed, position, surface, surface_x, surface_y, shape = None):
+def cut_out(Pressed, position, surface, surface_x, surface_y, shape='circle'):
     """
     Вырезаем область
     """
     r = 40
     if Pressed: # если мышь зажата удаляет область
         x, y = position
-        if shape is None:
+        if shape == 'triangle':
             draw_polygon1(surface, -surface_x + x, surface_y + y, 3)
     
         if shape =='circle':
@@ -180,8 +184,8 @@ def drip_seq(screen,
     
     if not paused:
             r_vector, v = model.step(r_vector, v) # работа модели
-            cut_out(pg.mouse.get_pressed()[0], pg.mouse.get_pos(),
-                destr, destr_x, destr_y, shape = shape)
+            cut_out(pg.mouse.get_pressed()[0], pg.mouse.get_pos(), destr,
+                    destr_x, destr_y, shape=shape)
         
         
     destr_mask = pg.mask.from_surface(destr)
@@ -208,24 +212,30 @@ def drip_seq(screen,
         if d.level == 3:
             Duck.duck_array.remove(d)
             ducks.record_destroying_duck(d.faculty)
-    """
+
     mx, my = pg.mouse.get_pos()
+    mouse = none
+    # здесь возможен выход за границы маски
     
     try:
-        resultt =  (not indestr_mask.get_at((mx, my))) \
-            and destr_mask.get_at((mx, my))
-    except Exception: # можно выйти за рамки
-        resultt = 0
+        is_on_destr = destr_mask.get_at(( mx - destr_x, my - destr_y))
+    except IndexError:
+        is_on_destr = 0
+        
+    try:
+        is_on_indestr = indestr_mask.get_at((mx - indestr_x, my - indestr_y))
+    except IndexError:
+        is_on_indestr = 0
+        
+    mouse_skin_change = (is_on_destr and (not is_on_indestr))
 
-    mouse = none
+
     if not paused:
-        if resultt == 1:
+        if mouse_skin_change:
             pg.mouse.set_visible(False)
             mouse = shovel 
         else:
             pg.mouse.set_visible(True)
-            mouse = none
-    """
         
         
 
@@ -234,13 +244,17 @@ def drip_seq(screen,
     # рисуем землю и неземлю
     screen.blit(destr, (destr_x, destr_y))
     screen.blit(indestr, (indestr_x, indestr_y))
-    #screen.blit(mouse, (mx, my - mouse.get_height()))
+
+    # рисуем мышь
+    screen.blit(mouse, (mx, my - mouse.get_height()))
 
     for d in Duck.duck_array: # рисуем уток
             screen.blit(duck_image[d.faculty][d.level], (int(d.x), int(d.y)))
 
     return(destr, destr_mask, r_vector, v)
-FPS = 0
+
+
+
 def example():
     paused = False
     r_vector, v = model.make_water(400, 600, -200, 0, 30) # делаем массив воды
