@@ -24,7 +24,7 @@ game_state = {'finished': False,
               'in_menu': True,
               'music_banned': True,
               'shape': 'circle',
-              'loaded_level': 2, 'update': 2}
+              'loaded_level': 1, 'update': 0}
 
 
 def quit():
@@ -83,6 +83,7 @@ def control_shape():
 def change_level(level):
     game_state['in_menu'] = False
     game_state['update'] = level
+    
 
 
 
@@ -96,7 +97,7 @@ class ButtonManager():
                          go_to_menu)
 
     replay_button = Button(40, 30, button_replay_surf, change_level,
-                           argument=game_state['loaded_level'])
+                           argument=1)
 
     sound_button = Button(WIDTH - 40, HEIGHT - 30, button_sound_surf,
                           control_music)
@@ -117,12 +118,15 @@ class ButtonManager():
 
     @staticmethod
     def updatecurlevel(loaded_level):
+        """
+        Эта функция обновляет  то что делает кнопка replay
 
-        ButtonManager.replay_button = Button(40, 30, button_replay_surf,
-                                             load_level, argument=loaded_level)
+        """
+
+        replay_button = Button(40, 30, button_replay_surf, change_level,
+                           argument=loaded_level)
         # обновляем соответсвующие элементы массива
-        ButtonManager.Game_buttons[1] = ButtonManager.replay_button
-        # ButtonManager.Pause_menu_buttons[2] = ButtonManager.replay_button        
+        ButtonManager.Game_buttons[1] = replay_button     
 
     @staticmethod
     def show_buttons():
@@ -161,7 +165,9 @@ class ButtonManager():
             button.check_click(event)
 
 def load_level(level):
+    
     game_state['loaded_level'] = level
+    
     game_state['update'] = 0
 
     pygame.mixer.music.fadeout(10000)
@@ -212,6 +218,7 @@ while not game_state['finished']:
             destr, destr_x, destr_y, destr_mask, \
             indestr, indestr_x, indestr_y, indestr_mask, \
             r_vector, v = load_level(game_state['update'])
+            print(game_state['loaded_level'])
 
         destr, destr_mask, r_vector, v = drip_seq(
             screen, destr, destr_x, destr_y, destr_mask,
