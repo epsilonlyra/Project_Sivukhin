@@ -141,7 +141,7 @@ def cut_out(Pressed, position, surface, surface_x, surface_y, shape = None):
     r = 40
     if Pressed: # если мышь зажата удаляет область
         x, y = position
-        if shape == None:
+        if shape is None:
             draw_polygon1(surface, -surface_x + x, surface_y + y, 3)
     
         if shape =='circle':
@@ -240,9 +240,8 @@ def drip_seq(screen,
             screen.blit(duck_image[d.faculty][d.level], (int(d.x), int(d.y)))
 
     return(destr, destr_mask, r_vector, v)
-
+FPS = 0
 def example():
-    global a # не обращайте внимания
     paused = False
     r_vector, v = model.make_water(400, 600, -200, 0, 30) # делаем массив воды
 
@@ -270,7 +269,8 @@ def example():
 
     # инициализация уток
         
-    Duck.duck_array.append(Duck(ducks.circle_function(200, 200, 10), 30, 200, 200,
+    Duck.duck_array.append(Duck(
+        ducks.circle_function(200, 200, 10), 30, 200, 200,
                            using_mask = True))
     while not done:
 
@@ -333,11 +333,12 @@ def example():
 
         pg.display.flip()
         clock.tick(30)
-        a = (clock.get_fps())
+        FPS = (clock.get_fps())
+    return(FPS)
 
 if __name__ == "__main__":
-    example()
-    print(a)
+    FPS = example()
+    print(FPS)
     pg.quit()
 
 

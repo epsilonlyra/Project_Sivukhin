@@ -5,10 +5,10 @@ import model
 import ducks
 import level_config
 
-from drip import drip_seq, Droplet
+from drip import *
 from ducks import *
 from buttons import *
-from level_config import *
+from level_config import levels
 
 WIDTH = 700
 HEIGHT = 800
@@ -30,9 +30,9 @@ game_state = {'finished' : False,
                    'in_menu' :True,
                    'music_banned' : True,
                    'shape' : 'circle',
-                   'loaded_level' : 2}
+                   'loaded_level' : 2, 'update' : 0 }
 
-   
+
 def quit():
     game_state['finished'] = True
     
@@ -69,15 +69,15 @@ def control_shape():
     else:
         game_state['shape'] = None
 
+def change_level(level):
+    game_state['in_menu'] = False
+    game_state['update'] = level
+
 def load_level(level):
     
-    global destr, destr_x, destr_y, destr_mask, \
-    indestr, indestr_x, indestr_y, indestr_mask, \
-    r_vector, v
-
-    game_state['in_menu'] = False
     game_state['loaded_level'] = level
-               
+    game_state['update'] = 0
+
     pygame.mixer.music.fadeout(10000)
 
     ButtonManager.updatecurlevel(level)
@@ -93,10 +93,13 @@ def load_level(level):
     
     Droplet.water_array = [] # уничтожили все капли
 
+    return(destr, destr_x, destr_y, destr_mask,
+           indestr, indestr_x, indestr_y,indestr_mask,
+           r_vector, v)
 
 class ButtonManager():
 
-
+    
     play_button =  Button(WIDTH / 2, HEIGHT /  2 - 300, button_play_surf,
                           playpause)
 
@@ -105,7 +108,7 @@ class ButtonManager():
     quit_button = Button(WIDTH / 2, HEIGHT /  2 - 270, button_quit_surf,
                          go_to_menu)
 
-    replay_button = Button(40, 30, button_replay_surf, load_level,
+    replay_button = Button(40, 30, button_replay_surf, change_level,
                            argument=game_state['loaded_level'])
 
     sound_button =  Button(WIDTH - 40, HEIGHT - 30 , button_sound_surf,
@@ -115,7 +118,7 @@ class ButtonManager():
     for i in range(len(level_button_surf)):
         level_buttons.append(Button(WIDTH / 2 - 120 + 120 * i, HEIGHT /  2,
                               level_button_surf[i],
-                              load_level, argument=i+1))
+                              change_level, argument=i+1))
 
     Pause_menu_buttons = [quit_button, play_button]
 
@@ -170,9 +173,11 @@ class ButtonManager():
 counted_FPS = 0
 
 while not game_state['finished']:
+    counted_FPS = clock.get_fps()
     
-    #counted_FPS = clock.get_fps()
-    screen.blit(brick_wall, (0, 0))
+    screen.fill('white')
+    #screen.blit(brick_wall, (0, 0))
+    
     if game_state['in_menu']:
         screen.blit(BACKGROUND, (0,0))
 
@@ -184,7 +189,12 @@ while not game_state['finished']:
             screen.blit(ducks.duck_image[f][2], (10 + 90*i, 10))
             i += 1
                
-    if not game_state['in_menu']:
+    else:
+        if game_state['update']:
+            destr, destr_x, destr_y, destr_mask, \
+            indestr, indestr_x, indestr_y,indestr_mask, \
+            r_vector, v = load_level(game_state['update'])
+        
         destr, destr_mask, r_vector, v = drip_seq(
             screen, destr, destr_x, destr_y, destr_mask,
             indestr,indestr_x, indestr_y, indestr_mask,
