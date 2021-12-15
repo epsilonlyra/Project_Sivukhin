@@ -12,18 +12,20 @@ from ducks import Duck
 from ducks import duck_image
 
 
-def draw_polygon1(screen, a, b, n):  # FIXME bad naming and incorrect working
+def draw_polygon(screen, x, y):
     """
-    Рисует на поверхности белый многоугольник
+    Draws a white polygon on screen
+    x, y - coordinates of the polygon (not sure which point exactly)
     """
 
-    angles_array = [(2 * i * math.pi / n) for i in range(n)]
-    pnts = []
-    length = 30
+    n = random.randint(5, 8)
+    angles_array = [(2 * i * math.pi / n) + random.randrange(-7, 7, 1) / 100 for i in range(n)]
+    points = []
     for angle in angles_array:
-        pnts.append((a + length * math.sin(angle),
-                     b - 2 * length - length * math.cos(angle)))
-    pg.draw.polygon(screen, 'white', pnts)
+        length = 30 + random.randint(-4, 4)
+        points.append((x + length * math.sin(angle),
+                       y - 2 * length - length * math.cos(angle)))
+    pg.draw.polygon(screen, 'white', points)
 
 
 class Droplet:
@@ -145,7 +147,7 @@ def cut_out(pressed_down, position, surface, surface_x, surface_y, shape='circle
     if pressed_down:  # если мышь зажата удаляет область
         x, y = position
         if shape == 'triangle':
-            draw_polygon1(surface, -surface_x + x, surface_y + y, 3)
+            draw_polygon(surface, -surface_x + x, surface_y + y)
 
         if shape == 'circle':
             pg.draw.circle(surface, 'white', (-surface_x + x,
@@ -274,9 +276,7 @@ def example():
 
     # инициализация уток
 
-    Duck.duck_array.append(Duck(
-        ducks.circle_function(200, 200, 10), 30, 200, 200,
-        using_mask=True))
+    Duck.duck_array.append(Duck(30, 200, 200,))
     while not done:
 
         for event in pg.event.get():
@@ -294,7 +294,7 @@ def example():
                     ball_vel.y = 5
                 elif event.key == pg.K_z:  # удаления по кнопке
                     x, y = pg.mouse.get_pos()
-                    draw_polygon1(destr, -destr_x + x, destr_y + y, random.randint(3, 7))
+                    draw_polygon(destr, -destr_x + x, destr_y + y)
 
         # работа с мячом
         ball_vel *= .94
@@ -324,7 +324,7 @@ def example():
             print((alp * 180 / pi - 90) * pi / 180)
 
         screen.fill(bg_color)
-        destr, destr_mask, r_vector, v = drip_seq(
+        destr, r_vector, v = drip_seq(
             screen, destr, destr_x, destr_y, indestr, indestr_x, indestr_y, indestr_mask,
             r_vector, v,
             paused)
