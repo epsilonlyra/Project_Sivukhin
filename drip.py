@@ -22,9 +22,9 @@ def draw_polygon(screen, x, y):
     angles_array = [(2 * i * math.pi / n) + random.randrange(-7, 7, 1) / 100 for i in range(n)]
     points = []
     for angle in angles_array:
-        length = 30 + random.randint(-4, 4)
+        length = 30+ random.randint(-4, 7)
         points.append((x + length * math.sin(angle),
-                       y - length * math.cos(angle)))
+                       y +  length * math.cos(angle)))
     pg.draw.polygon(screen, 'white', points)
 
 
@@ -139,7 +139,8 @@ def get_obstacles(image, x, y):
     return image, image_x, image_y, image_mask
 
 
-def cut_out(pressed_down, position, surface, surface_x, surface_y, shape='circle'):
+def cut_out(pressed_down, position, surface, surface_x, surface_y,
+            shape='circle'):
     """
     Вырезаем область
     """
@@ -147,7 +148,7 @@ def cut_out(pressed_down, position, surface, surface_x, surface_y, shape='circle
     if pressed_down:  # если мышь зажата удаляет область
         x, y = position
         if shape == 'triangle':
-            draw_polygon(surface, -surface_x + x, surface_y + y)
+            draw_polygon(surface, -surface_x + x, -surface_y + y)
 
         if shape == 'circle':
             pg.draw.circle(surface, 'white', (-surface_x + x,
