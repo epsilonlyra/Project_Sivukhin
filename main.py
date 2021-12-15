@@ -1,5 +1,7 @@
+import ducks
+import model
 from buttons import *
-from drip import *
+from drip import drip_seq, Droplet
 from ducks import *
 from level_config import levels
 
@@ -24,10 +26,10 @@ game_state = {'finished': False,
               'in_menu': True,
               'music_banned': True,
               'shape': 'circle',
-              'loaded_level': 1, 'update': 0}
+              'loaded_level': 1, 'update': 1}
 
 
-def quit():
+def end_game():
     """
     Вызов прекращает игру
     """
@@ -83,11 +85,13 @@ def control_shape():
 def change_level(level):
     game_state['in_menu'] = False
     game_state['update'] = level
+
+
+class ButtonManager:
+    """
+    Статический класс для работы визцализации и дейстявия всех кнопок
+    """
     
-
-
-
-class ButtonManager():
     play_button = Button(WIDTH / 2, HEIGHT / 2 - 300, button_play_surf,
                          playpause)
 
@@ -119,22 +123,22 @@ class ButtonManager():
     @staticmethod
     def updatecurlevel(loaded_level):
         """
-        Эта функция обновляет  то что делает кнопка replay
-
+        Эта функция обновляет  то что делает кнопка replay при загрузке уровня
         """
 
         replay_button = Button(40, 30, button_replay_surf, change_level,
-                           argument=loaded_level)
+                               argument=loaded_level)
         # обновляем соответсвующие элементы массива
-        ButtonManager.Game_buttons[1] = replay_button     
+        ButtonManager.Game_buttons[1] = replay_button
 
     @staticmethod
     def show_buttons():
-
+        """
+        Выбирает активные кнопки и рисует их на screen
+        """
         if game_state['in_menu']:
             active_buttons = ButtonManager.Menu_buttons
             pygame.mouse.set_visible(True)
-
 
         elif game_state['paused']:
             active_buttons = ButtonManager.Pause_menu_buttons
@@ -148,7 +152,9 @@ class ButtonManager():
 
     @staticmethod
     def check_click():
-
+        """
+        Выберает активные кнопки и проверяет наличие нажатия
+        """
         if game_state['in_menu']:
             active_buttons = ButtonManager.Menu_buttons
 
@@ -164,10 +170,13 @@ class ButtonManager():
         for button in active_buttons:
             button.check_click(event)
 
+
 def load_level(level):
-    
+    """
+
+    """
     game_state['loaded_level'] = level
-    
+
     game_state['update'] = 0
 
     pygame.mixer.music.fadeout(10000)
@@ -190,9 +199,9 @@ def load_level(level):
             r_vector, v)
 
 
-destr, destr_x, destr_y, destr_mask,indestr, indestr_x, \
-indestr_y, indestr_mask, r_vector, v = load_level(game_state['update'])
-
+# на всякий случай обьявим их тут
+destr, destr_x, destr_y, destr_mask, indestr, indestr_x, \
+    indestr_y, indestr_mask, r_vector, v = load_level(game_state['update'])
 
 counted_FPS = 0
 
@@ -216,15 +225,14 @@ while not game_state['finished']:
     else:
         if game_state['update']:
             destr, destr_x, destr_y, destr_mask, \
-            indestr, indestr_x, indestr_y, indestr_mask, \
-            r_vector, v = load_level(game_state['update'])
-            print(game_state['loaded_level'])
+                indestr, indestr_x, indestr_y, indestr_mask, \
+                r_vector, v = load_level(game_state['update'])
 
         destr, destr_mask, r_vector, v = drip_seq(
-            screen, destr, destr_x, destr_y, destr_mask,
-            indestr, indestr_x, indestr_y, indestr_mask,
+            screen, destr, destr_x, destr_y, indestr, indestr_x, indestr_y, indestr_mask,
             r_vector, v,
-            game_state['paused'], shape=game_state['shape'])
+            game_state['paused'], shape=game_state['shape']
+        )
 
     ButtonManager.show_buttons()
 

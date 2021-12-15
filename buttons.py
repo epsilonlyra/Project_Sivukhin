@@ -88,6 +88,10 @@ class Button(Picture):
         self.argument = argument
 
     def check_click(self, event):
+        """
+        Проверка на клик пользователя по кнопке и выполнение функционала кнопки
+        event : pygame.event.MOUSEBUTTONDOWN
+        """
         x = event.pos[0]
         y = event.pos[1]
         if self.image_rect.collidepoint(x, y):
@@ -109,6 +113,7 @@ pygame.font.init()
 
 font = pygame.font.SysFont(None, 30)
 
+# создание поверхностей для кнопок
 button_play_surf = font.render('Play', True, 'red', 'green')
 button_pause_surf = font.render('Pause', True, 'green')
 button_quit_surf = font.render('Quit', True, 'red')
@@ -123,3 +128,4 @@ BACKGROUND = pygame.transform.scale(
     BACKGROUND, (WIDTH, HEIGHT))
 
 brick_wall = fetch_file('pictures', 'wall.png')
+
