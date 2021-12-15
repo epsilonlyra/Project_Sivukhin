@@ -18,13 +18,13 @@ def draw_polygon(screen, x, y):
     x, y - coordinates of the polygon (not sure which point exactly)
     """
 
-    n = random.randint(5, 8)
+    n = random.randint(4, 6)
     angles_array = [(2 * i * math.pi / n) + random.randrange(-7, 7, 1) / 100 for i in range(n)]
     points = []
     for angle in angles_array:
         length = 30 + random.randint(-4, 4)
         points.append((x + length * math.sin(angle),
-                       y - 2 * length - length * math.cos(angle)))
+                       y - length * math.cos(angle)))
     pg.draw.polygon(screen, 'white', points)
 
 
