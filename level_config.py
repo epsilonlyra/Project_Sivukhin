@@ -1,12 +1,12 @@
-import ducks
 import pygame
-from ducks import *
+
+import ducks
 from buttons import fetch_file
 from drip import get_obstacles
 
 pygame.init()
 pygame.display.init()
-screen = pygame.display.set_mode((10, 10))  # это нужно чтобы работал convert
+screen = pygame.display.set_mode((10, 10))  # needed for convert to work
 
 
 def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info,
@@ -48,12 +48,12 @@ def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info,
         for d in duck_info:
             if len(d) == 2:
                 duck_x, duck_y = d
-                duck_list.append(Duck(None, 30,
-                                      duck_x, duck_y, using_mask=True))
+                duck_list.append(ducks.Duck(None, 30,
+                                            duck_x, duck_y, using_mask=True))
             if len(d) == 3:
                 duck_x, duck_y, f = d
-                duck_list.append(Duck(None, 30, duck_x,
-                                      duck_y, using_mask=True, faculty=f))
+                duck_list.append(ducks.Duck(None, 30, duck_x,
+                                            duck_y, using_mask=True, faculty=f))
         return duck_list
 
     level = dict({'destr': destr, 'indestr': indestr, 'ducks': duck_function})
