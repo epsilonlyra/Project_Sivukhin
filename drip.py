@@ -1,36 +1,39 @@
-import pygame as pg
-import model
-from pygame.math import Vector2
-from math import atan2, degrees, pi
-from buttons import fetch_file
 import math
+import random
+from math import atan2, pi
+
+import pygame as pg
+from pygame.math import Vector2
+
 import ducks
+import model
+from buttons import fetch_file
 from ducks import Duck
 from ducks import duck_image
-import random
 
 
-def draw_polygon1(screen, a, b, n):
+def draw_polygon1(screen, a, b, n):  # FIXME bad naming and incorrect working
     """
     Рисует на поверхности белый многоугольник
     """
-    
-    A = [(2*i*math.pi/n) for i in range(n)]
-    pnts=[]
+
+    angles_array = [(2 * i * math.pi / n) for i in range(n)]
+    pnts = []
     length = 30
-    for angle in A:
-        pnts.append( (a + length*math.sin(angle),
-                      b - 2* length - length*math.cos(angle)))
+    for angle in angles_array:
+        pnts.append((a + length * math.sin(angle),
+                     b - 2 * length - length * math.cos(angle)))
     pg.draw.polygon(screen, 'white', pnts)
 
-class Droplet():
+
+class Droplet:
     """
     Класс для отображения частиц воды
     """
-    
+
     side = 80  # размер поверхности для капли
     water_array = []  # массив в котором хранятся следы капель
-    
+
     def __init__(self, x, y):
         """
         Инициализация класса
@@ -39,26 +42,27 @@ class Droplet():
         """
         self.x = int(x)
         self.y = int(y)
-        self.r = 10 # радиус частицы
-        self.surf =  pg.Surface((side, side), pg.SRCALPHA)
+        self.r = 10  # радиус частицы
+        self.surf = pg.Surface((side, side), pg.SRCALPHA)
         pg.draw.circle(self.surf, 'blue',
-                       [int(side/2), int(side/2)],
+                       [int(side / 2), int(side / 2)],
                        int(self.r))
         self.side = side
-        self.k = 1 # коэфициент сжатия
+        self.k = 1  # коэфициент сжатия
 
     def draw(self, screen, paused):
-        
+
         """
         Рисует частицу и уменьшает размер поверхности
         """
         if not paused:
-            self.side = int(self.side/(self.k * self.k))
-    
+            self.side = int(self.side / (self.k * self.k))
+
         surf = pg.transform.scale(self.surf, (self.side, self.side))
         surf.set_alpha(100)
         screen.blit(surf, (self.x, self.y))
 
+    @staticmethod
     def draw_water(screen, paused):
         """
         Рисует все следы из массива следов, если размер следа мал удаляет его
@@ -72,8 +76,7 @@ class Droplet():
         else:
             for drop in Droplet.water_array:
                 drop.draw(screen, paused)
-            
-            
+
 
 def collide(mask, x_mask, y_mask, r_vector, i, v):
     """
@@ -87,36 +90,35 @@ def collide(mask, x_mask, y_mask, r_vector, i, v):
     x = int(x)
     y = int(y)
     offset2 = x_mask - x, y_mask - y
-    
+
     crisis = drop_mask.overlap(mask, offset2)
     if crisis:
         dx = (drop_mask.overlap_area(mask, (x_mask - x + 1,
-                                                 y_mask - y)) -
+                                            y_mask - y)) -
               drop_mask.overlap_area(mask, (x_mask - x - 1,
-                                                  y_mask - y)))
-        
+                                            y_mask - y)))
+
         dy = (drop_mask.overlap_area(mask, (x_mask - x,
-                                                 y_mask - y + 1)) -
+                                            y_mask - y + 1)) -
               drop_mask.overlap_area(mask, (x_mask - x,
-                                                  y_mask - y - 1)))
+                                            y_mask - y - 1)))
         alpha = atan2(dy, dx)
-        
-            
+
         v[i][0], v[i][1] = model.reflect(v[i][0], v[i][1], alpha)
         delta = 0.1
-        while crisis: # мега костыль
+        while crisis:  # мега костыль
             if not drop_mask.overlap(mask, offset2):
                 crisis = False
-                
-            r_vector[i][0] += delta*math.cos(alpha)
-            r_vector[i][1] += delta*math.sin(alpha)
-            
+
+            r_vector[i][0] += delta * math.cos(alpha)
+            r_vector[i][1] += delta * math.sin(alpha)
+
             x, y = r_vector[i]
             x = int(x)
             y = int(y)
-            
-            offset2 = x_mask- x, y_mask - y
-    return(r_vector[i],v[i][0], v[i][1])
+
+            offset2 = x_mask - x, y_mask - y
+    return r_vector[i], v[i][0], v[i][1]
 
 
 def get_obstacles(image, x, y):
@@ -127,80 +129,76 @@ def get_obstacles(image, x, y):
     x y - координаты центра соотв. прямоугольника
     """
     image = image.convert_alpha()
-    image_rect = image.get_rect(center = (x, y))
+    image_rect = image.get_rect(center=(x, y))
     image.set_colorkey('white')
     image_x = image_rect[0]
     image_y = image_rect[1]
     image_mask = pg.mask.from_surface(image)
-    return(image, image_x, image_y, image_mask)
+    return image, image_x, image_y, image_mask
 
-def cut_out(Pressed, position, surface, surface_x, surface_y, shape = None):
+
+def cut_out(pressed_down, position, surface, surface_x, surface_y, shape='circle'):
     """
     Вырезаем область
     """
     r = 40
-    if Pressed: # если мышь зажата удаляет область
+    if pressed_down:  # если мышь зажата удаляет область
         x, y = position
-        if shape == None:
+        if shape == 'triangle':
             draw_polygon1(surface, -surface_x + x, surface_y + y, 3)
-    
-        if shape =='circle':
+
+        if shape == 'circle':
             pg.draw.circle(surface, 'white', (-surface_x + x,
-                                           -surface_y + y), r)
-            
+                                              -surface_y + y), r)
+
 
 # создание маски для частицы воды(общая для всех)
 side = 20
 WATER = pg.Surface((side, side), pg.SRCALPHA)
 r_water = 4
-pg.draw.circle(WATER, [0, 0, 255], [int(side/2), int(side/2)], r_water)
+pg.draw.circle(WATER, [0, 0, 255], [int(side / 2), int(side / 2)], r_water)
 drop_mask = pg.mask.from_surface(WATER)
 
-shovel =  fetch_file('pictures','lop.png')
-none = fetch_file('pictures','none.png')
+shovel = fetch_file('pictures', 'lop.png')
+none = fetch_file('pictures', 'none.png')
 shovel.set_colorkey('white')
 none.set_colorkey('white')
 
-# FIXME
+
 def drip_seq(screen,
-             destr, destr_x, destr_y, destr_mask, indestr,
+             destr, destr_x, destr_y, indestr,
              indestr_x, indestr_y, indestr_mask,
              r_vector, v,
              paused,
-             shape = 'circle'):
+             shape='circle'):
     """
     Это квинтиссенция всего что делает drip
     parametrs:
-    Я просто не знаю как функцию без параметров
-    передавать через файл к файл
+    
     """
 
-    
-
     destr_mask = pg.mask.from_surface(destr)
-    
+    mx, my = pg.mouse.get_pos()
     if not paused:
-            r_vector, v = model.step(r_vector, v) # работа модели
-            cut_out(pg.mouse.get_pressed()[0], pg.mouse.get_pos(),
-                destr, destr_x, destr_y, shape = shape)
-        
-        
-    destr_mask = pg.mask.from_surface(destr)
+        r_vector, v = model.step(r_vector, v)  # работа модели
+        cut_out(pg.mouse.get_pressed()[0], (mx, my), destr,
+                destr_x, destr_y, shape=shape)
+
     # движение воды и работа с утками
 
     for i in range(len(r_vector)):
         x, y = r_vector[i]
         if not paused:
-            Droplet.water_array.append(Droplet(x,y)) # добавляем новую поз.
+            Droplet.water_array.append(Droplet(x, y))  # добавляем новую поз.
 
         # соударения с поверхностями
         collide(destr_mask, destr_x, destr_y, r_vector, i, v)
         collide(indestr_mask, indestr_x, indestr_y, r_vector, i, v)
 
-        for d in Duck.duck_array: # проверяем столновения с утками
+        for d in Duck.duck_array:  # проверяем столновения с утками
             if d.check(x, y, drop_mask):
                 d.water += 1
-                r_vector[i] = [-1000, -1000] # cсылаем в Сибирь
+                r_vector[i] = [-1000, -1000]  # cсылаем в Сибирь
                 break
 
     # обновление уток
@@ -210,68 +208,75 @@ def drip_seq(screen,
             Duck.duck_array.remove(d)
             ducks.record_destroying_duck(d.faculty)
 
-    mx, my = pg.mouse.get_pos()
-    
-    try:
-        resultt =  (not indestr_mask.get_at((mx, my))) \
-            and destr_mask.get_at((mx, my))
-    except Exception: # можно выйти за рамки
-        resultt = 0
-
     mouse = none
+    # здесь возможен выход за границы маски
+
+    try:
+        is_on_destr = destr_mask.get_at((mx - destr_x, my - destr_y))
+    except IndexError:
+        is_on_destr = 0
+
+    try:
+        is_on_indestr = indestr_mask.get_at((mx - indestr_x, my - indestr_y))
+    except IndexError:
+        is_on_indestr = 0
+
+    mouse_skin_change = (is_on_destr and (not is_on_indestr))
+
     if not paused:
-        if resultt == 1:
+        if mouse_skin_change:
             pg.mouse.set_visible(False)
-            mouse = shovel 
+            mouse = shovel
         else:
             pg.mouse.set_visible(True)
-            mouse = none
-        
-        
 
-    Droplet.draw_water(screen, paused) # рисуем воду
+    Droplet.draw_water(screen, paused)  # рисуем воду
 
     # рисуем землю и неземлю
     screen.blit(destr, (destr_x, destr_y))
     screen.blit(indestr, (indestr_x, indestr_y))
+
+    # рисуем мышь
     screen.blit(mouse, (mx, my - mouse.get_height()))
 
-    for d in Duck.duck_array: # рисуем уток
-            screen.blit(duck_image[d.faculty][d.level], (int(d.x), int(d.y)))
+    for d in Duck.duck_array:  # рисуем уток
+        screen.blit(duck_image[d.faculty][d.level], (int(d.x), int(d.y)))
 
-    return(destr, destr_mask, r_vector, v)
+    return destr, r_vector, v
+
 
 def example():
-    global a # не обращайте внимания
+    fps = 0
     paused = False
-    r_vector, v = model.make_water(400, 600, -200, 0, 30) # делаем массив воды
+    r_vector, v = model.make_water(400, 600, -200, 0, 30)  # делаем массив воды
 
     screen = pg.display.set_mode((640, 480))
     clock = pg.time.Clock()
-    BG_COLOR = pg.Color(255, 0, 0)
-    screen.fill(BG_COLOR)
+    bg_color = pg.Color(255, 0, 0)
+    screen.fill(bg_color)
 
     destr, destr_x, destr_y, destr_mask = get_obstacles(
-        fetch_file('pictures', 'TEST2.png','TEST'), 340, 240)
-    
+        fetch_file('pictures', 'TEST2.png', 'TEST'), 340, 240)
+
     indestr, indestr_x, indestr_y, indestr_mask = get_obstacles(
-        fetch_file('pictures', 'TEST1.png','TEST'), 340, 440)
+        fetch_file('pictures', 'TEST1.png', 'TEST'), 340, 440)
 
     # шар теста
     r = 15
-    BALL = pg.Surface((30, 30), pg.SRCALPHA)
-    pg.draw.circle(BALL, [250, 250, 250], [15, 15], r)
+    ball = pg.Surface((30, 30), pg.SRCALPHA)
+    pg.draw.circle(ball, [250, 250, 250], [15, 15], r)
     ball_pos = Vector2(30, 30)
-    ballrect = BALL.get_rect(center=ball_pos)
+    ballrect = ball.get_rect(center=ball_pos)
     ball_vel = Vector2(0, 0)
-    ball_mask = pg.mask.from_surface(BALL)
-    
+    ball_mask = pg.mask.from_surface(ball)
+
     done = False
 
     # инициализация уток
-        
-    Duck.duck_array.append(Duck(ducks.circle_function(200, 200, 10), 30, 200, 200,
-                           using_mask = True))
+
+    Duck.duck_array.append(Duck(
+        ducks.circle_function(200, 200, 10), 30, 200, 200,
+        using_mask=True))
     while not done:
 
         for event in pg.event.get():
@@ -286,17 +291,16 @@ def example():
                 elif event.key == pg.K_w:
                     ball_vel.y = -5
                 elif event.key == pg.K_s:
-                     ball_vel.y = 5
-                elif event.key == pg.K_z: # удаления по кнопке
+                    ball_vel.y = 5
+                elif event.key == pg.K_z:  # удаления по кнопке
                     x, y = pg.mouse.get_pos()
-                    draw_polygon1(destr, -destr_x + x, destr_y + y, random.randint(3,7))
+                    draw_polygon1(destr, -destr_x + x, destr_y + y, random.randint(3, 7))
 
-        
         # работа с мячом
         ball_vel *= .94
         ball_pos += ball_vel
         ballrect.center = ball_pos
-        
+
         if ballrect.top < 0 and ball_vel.y < 0:
             ball_vel.y *= -1
         elif ballrect.bottom > screen.get_height() and ball_vel.y > 0:
@@ -305,40 +309,34 @@ def example():
             ball_vel.x *= -1
         elif ballrect.right > screen.get_width() and ball_vel.x > 0:
             ball_vel.x *= -1
-        
-
-
-        
 
         offset = destr_x - ballrect[0], destr_y - ballrect[1]
         offset1 = indestr_x - ballrect[0], indestr_y - ballrect[1]
 
         overlap = (ball_mask.overlap(destr_mask, offset) or
                    ball_mask.overlap(indestr_mask, offset1))
-        
+
         if overlap:
             ball_vel.y *= -1
             ball_vel.x *= -1
-            pg.draw.line(BALL, (0, 0, 255), (r, r), overlap)
+            pg.draw.line(ball, (0, 0, 255), (r, r), overlap)
             alp = atan2(overlap[0] - r, overlap[1] - r)
-            print((alp*180/pi-90)*pi/180)
+            print((alp * 180 / pi - 90) * pi / 180)
 
-        screen.fill(BG_COLOR)
+        screen.fill(bg_color)
         destr, destr_mask, r_vector, v = drip_seq(
-            screen, destr, destr_x, destr_y, destr_mask,
-            indestr,indestr_x, indestr_y, indestr_mask,
+            screen, destr, destr_x, destr_y, indestr, indestr_x, indestr_y, indestr_mask,
             r_vector, v,
             paused)
-        screen.blit(BALL, ballrect) # рисуем мяч
+        screen.blit(ball, ballrect)  # рисуем мяч
 
         pg.display.flip()
         clock.tick(30)
-        a = (clock.get_fps())
+        fps = (clock.get_fps())
+    return fps
+
 
 if __name__ == "__main__":
-    example()
-    print(a)
+    FPS = example()
+    print(FPS)
     pg.quit()
-
-
-
