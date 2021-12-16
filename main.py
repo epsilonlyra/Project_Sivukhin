@@ -7,8 +7,7 @@ from ducks import *
 from drip import drip_seq, Droplet
 from level_config import levels
 
-WIDTH = 700
-HEIGHT = 800
+
 FPS = 30
 
 pygame.display.set_icon(icon)
@@ -27,7 +26,7 @@ def load_level(level):
     """
     Возращает параметры земли и неземли обновляет уток
     """
-    
+
     game_state['loaded_level'] = level
 
     game_state['update'] = 0
@@ -52,18 +51,18 @@ def load_level(level):
             r_vector, v)
 
 
-# на всякий случай обьявим их тут это заглушит музыку но это фича
-destr, destr_x, destr_y, destr_mask, indestr, indestr_x, \
-    indestr_y, indestr_mask, r_vector, v = load_level(game_state['update'])
-
 def main_loop():
     """
     Основной цикл игры
     """
-    
-    counted_FPS = 0
+
+    # на всякий случай обьявим их тут это заглушит музыку но это фича
+    (destr, destr_x, destr_y, destr_mask, indestr, indestr_x,
+     indestr_y, indestr_mask, r_vector, v) = load_level(game_state['update'])
+
+    counted_fps = 0
     while not game_state['finished']:
-        counted_FPS = clock.get_fps()
+        counted_fps = clock.get_fps()
 
         screen.fill('white')
         # screen.blit(brick_wall, (0, 0))
@@ -81,9 +80,9 @@ def main_loop():
 
         else:
             if game_state['update']:
-                destr, destr_x, destr_y, destr_mask, \
-                    indestr, indestr_x, indestr_y, indestr_mask, \
-                    r_vector, v = load_level(game_state['update'])
+                (destr, destr_x, destr_y, destr_mask,
+                 indestr, indestr_x, indestr_y, indestr_mask,
+                 r_vector, v) = load_level(game_state['update'])
 
             destr, r_vector, v = drip_seq(
                 screen, destr, destr_x, destr_y,
@@ -105,8 +104,9 @@ def main_loop():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_c:
                     control_shape()
-    return counted_FPS
-    
+    return counted_fps
+
+
 if __name__ == "__main__":
     print(main_loop())
     pygame.quit()

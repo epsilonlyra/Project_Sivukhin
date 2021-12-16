@@ -5,6 +5,23 @@ import pygame
 
 def fetch_file(directory, filename, *directories, file_type=None,
                x_size=None, y_size=None):
+    """
+    Функция для работы с файлами
+    parametres:
+    directory : string  первая папка в  которой находится файл
+    filename : string имя файла, включая расширения
+    *directory : string  необязательный аргументы,
+            перечисленные через запятую папки на пути к файлу от directory
+    file_type : string тип файла по дефолту считается что файл картинка,
+                music - музыкальной, other иной
+    x_size, y_sizе : int если тип файла картинка(None) то эти параметры его
+        нового размера
+    return:
+        если file_type is None : pygame.Surface
+        eсли file_type is music : сделает pygame.music.load файла
+        иначе вернет abspath
+    """
+    
     path = os.path.abspath(directory)
     for directory in directories:
         path = os.path.join(path, directory)
@@ -24,7 +41,7 @@ def fetch_file(directory, filename, *directories, file_type=None,
 
 WIDTH = 700
 HEIGHT = 800
-
+# параметры экрана
 
 class Picture:
     """
@@ -103,11 +120,7 @@ class Button(Picture):
 
 icon = fetch_file('pictures', 'icon.jpg')  # icon for app
 dgap_cat = fetch_file('pictures', 'cat_dgap.jpg')
-TEST = fetch_file('pictures', 'TEST.png', 'TEST')
 Cat = Picture(200, 700, dgap_cat, 100, 100, angle=0)
-
-template_surf = pygame.Surface((100, 100))
-changable_surf = template_surf
 
 pygame.font.init()
 
@@ -120,9 +133,11 @@ button_quit_surf = font.render('Quit', True, 'red')
 button_replay_surf = font.render('Retry', True, 'green')
 button_sound_surf = font.render('Sound', True, 'green')
 level_button_surf = []
-for i in range(1, 4):
+for i in range(1, 6):
     level_button_surf.append(font.render('Level' + str(i), False, 'green',
                                          'black'))
+
+# создание бэкграунда для главного меню и левелов
 BACKGROUND = (fetch_file('pictures', 'lab_corp.png'))
 BACKGROUND = pygame.transform.scale(
     BACKGROUND, (WIDTH, HEIGHT))
