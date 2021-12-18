@@ -21,7 +21,7 @@ def fetch_file(directory, filename, *directories, file_type=None,
         eсли file_type is music : сделает pygame.music.load файла
         иначе вернет abspath
     """
-    
+
     path = os.path.abspath(directory)
     for directory in directories:
         path = os.path.join(path, directory)
@@ -41,10 +41,11 @@ def fetch_file(directory, filename, *directories, file_type=None,
 
 WIDTH = 700
 HEIGHT = 800
-# параметры экрана
+
+
+# screen parametrs
 
 class Picture:
-    
 
     def __init__(self, x, y, image, *size, angle=None):
         """
@@ -54,7 +55,7 @@ class Picture:
         *size : длина, высота . Если будет передано  не два аргумента,
         то будут использованы длина и высота image
         """
-        
+
         self.x = x
         self.y = y
         if len(size) == 2:
@@ -144,4 +145,3 @@ BACKGROUND = pygame.transform.scale(
 brick_wall = fetch_file('pictures', 'wall.png')
 # создание надписи игра окончена
 game_over_surf = font.render('Level Finished', True, 'green')
-

@@ -6,7 +6,7 @@ from buttons import *
 game_state = {'finished': False,
               'paused': True,
               'in_menu': True,
-              'in_level_end' : False,
+              'in_level_end': False,
               'music_banned': True,
               'shape': 'circle',
               'loaded_level': 1, 'update': 1}
@@ -60,10 +60,14 @@ def control_music():
 
 
 def control_shape():
-    if game_state['shape'] == 'triangle':
+    """
+    Function to control shape of cut-out area
+    """
+    
+    if game_state['shape'] == 'polyhedron':
         game_state['shape'] = 'circle'
     else:
-        game_state['shape'] = 'triangle'
+        game_state['shape'] = 'polyhedron'
 
 
 def change_level(level):
@@ -75,16 +79,18 @@ def change_level(level):
     game_state['in_menu'] = False
     game_state['update'] = level
 
+
 def anounce_level_change_complete(level):
     """
     parametrs:
     level : int (1-5) загруженный уровень
     Функция обьявляет о загрузке уровня и устанавливает его как загруженный
     """
-    
+
     game_state['loaded_level'] = level
     game_state['update'] = 0
     game_state['in_level_end'] = False
+
 
 def anounce_level_complete():
     """
@@ -93,7 +99,7 @@ def anounce_level_complete():
     game_state['in_level_end'] = True
 
 
-#ниже идет описание кнопок
+# ниже идет описание кнопок
 
 play_button = Button(WIDTH / 2, HEIGHT / 2 - 300, button_play_surf,
                      playpause)
@@ -104,8 +110,7 @@ quit_button = Button(WIDTH / 2, HEIGHT / 2 - 270, button_quit_surf,
                      go_to_menu)
 
 replay_level_button = Button(WIDTH / 2, HEIGHT / 2 - 300, button_replay_surf,
-                     change_level, argument=1)
-
+                             change_level, argument=1)
 
 replay_button = Button(40, 30, button_replay_surf, change_level,
                        argument=1)
@@ -117,7 +122,7 @@ level_buttons = []
 for i in range(len(level_button_surf)):
     level_buttons.append(Button(WIDTH / 2 - 240 + 120 * i, HEIGHT / 2,
                                 level_button_surf[i],
-                                change_level, argument=i+1))
+                                change_level, argument=i + 1))
 
 Pause_menu_buttons = [quit_button, play_button]
 
@@ -143,7 +148,7 @@ def updatecurlevel(loaded_level):
     replay_button.argument = loaded_level
     replay_level_button.argument = loaded_level
 
-    
+
 def show_buttons(screen):
     """
     Выбирает активные кнопки и рисует их на screen
@@ -161,13 +166,13 @@ def show_buttons(screen):
     elif game_state['in_level_end']:
         active_buttons = Level_end_buttons
         pygame.draw.rect(screen, 'magenta', (round(WIDTH / 2) - 60,
-                                           round(HEIGHT / 2) - 315, 120, 60),
+                                             round(HEIGHT / 2) - 315, 120, 60),
                          border_radius=20)
-        
+
         screen.blit(game_over_surf,
-                    (round(WIDTH/2) - round(game_over_surf.get_width()/2),
-                    40))
-        
+                    (round(WIDTH / 2) - round(game_over_surf.get_width() / 2),
+                     40))
+
     else:
         active_buttons = Game_buttons
 
@@ -193,7 +198,7 @@ def check_click(screen, event):
 
     elif game_state['in_level_end']:
         active_buttons = Level_end_buttons
-    
+
     else:
         active_buttons = Game_buttons
 

@@ -15,7 +15,9 @@ from ducks import duck_image
 def draw_polygon(screen, x, y):
     """
     Draws a white polygon on screen
-    x, y - coordinates of the polygon (not sure which point exactly)
+    parametrs:
+    x, y : int coordinates of some point of the polygon
+    screen : pygame.Surface
     """
 
     n = random.randint(3, 6)
@@ -29,16 +31,13 @@ def draw_polygon(screen, x, y):
 
 
 class Droplet:
-    """
-    Класс для отображения частиц воды
-    """
 
     side = 30  # размер поверхности для капли
     water_array = []  # массив в котором хранятся следы капель
 
     def __init__(self, x, y):
         """
-        Инициализация класса
+        Инициализация класса для отображения частиц воды 
         params:
         x, y - координаты центра частицы
         """
@@ -66,7 +65,7 @@ class Droplet:
         surf = pg.transform.scale(self.surf, (self.side, self.side))
         screen.blit(surf, (self.x, self.y))
         if not paused:
-            self.side = int(self.side / (self.k))
+            self.side = int(self.side / self.k)
 
     @staticmethod
     def draw_water(screen, paused):
@@ -77,24 +76,28 @@ class Droplet:
         Рисует все следы из массива следов, если размер следа мал удаляет его
         """
         for drop in Droplet.water_array:
-                drop.draw(screen, paused)
+            drop.draw(screen, paused)
         if not paused:
             for drop in Droplet.water_array:
                 drop.k += 0.001
                 drop.time += 1
                 if drop.time >= 10:
                     Droplet.water_array.remove(drop)
-                    
-            
-
 def collide(mask, x_mask, y_mask, r_vector, i, v):
     """
     Эта функция отвечает за столкновение частицы со стенками
     Она меняет скорости и координаты частиц
+    parameters:
     mask : маска стенки
-    x_mask, y_mask координаты блита  соответсвущей поверхности
-
+    x_mask, y_mask : координаты блита  соответсвущей поверхности
+    r_vector : np array holding coordinates of particle
+    i : number of particle
+    v : np array holding velocities
+    
+    returns:
+    r_vector[i], v[i][0], v[i][1] : params of particle after reflection
     """
+    
     x, y = r_vector[i]
     x = int(x)
     y = int(y)
@@ -114,13 +117,15 @@ def collide(mask, x_mask, y_mask, r_vector, i, v):
         alpha = atan2(dy, dx)
 
         v[i][0], v[i][1] = model.reflect(v[i][0], v[i][1], alpha)
-        delta = 0.1
+
+        # when particle is stuck it begins quantum movement from obstacle
+        move_quant = 0.1  # quant of movement 
         while crisis:  # мега костыль
             if not drop_mask.overlap(mask, offset2):
                 crisis = False
 
-            r_vector[i][0] += delta * math.cos(alpha)
-            r_vector[i][1] += delta * math.sin(alpha)
+            r_vector[i][0] += move_quant * math.cos(alpha)
+            r_vector[i][1] += move_quant * math.sin(alpha)
 
             x, y = r_vector[i]
             x = int(x)
@@ -154,7 +159,7 @@ def cut_out(pressed_down, position, surface, surface_x, surface_y,
     r = 40
     if pressed_down:  # если мышь зажата удаляет область
         x, y = position
-        if shape == 'triangle':
+        if shape == 'polyhedron':
             if pg.mouse.get_rel() != (0, 0):
                 draw_polygon(surface, -surface_x + x, -surface_y + y)
 
@@ -178,14 +183,23 @@ none.set_colorkey('white')
 
 def drip_seq(screen,
              destr, destr_x, destr_y, indestr,
-             indestr_x, indestr_y, indestr_mask,
-             r_vector, v,
+             indestr_x, indestr_y, indestr_mask, r_vector, v,
              paused,
              shape='circle'):
     """
     Это квинтиссенция всего что делает drip
     parametrs:
+    destr, indestr : pygame.Surface represents destructible and indestructible
+    destr_x, destr_y, indestr_x, indestr_y : int coordinates of left corner \
+        corresponding rectum
+    r_vector, v : numpy arrays holding position and speed of water particles
+    paused : Boolean is the game on pause
+    shape : 'cirlce' or 'polyhedron' cut-out area type
     
+    returns:
+    destr : pygame.Surface destructible ground after cuttiing out hole
+    r_vector, v : changed numpy arrays holding info about particles after\
+        in-game tick
     """
 
     destr_mask = pg.mask.from_surface(destr)
@@ -257,6 +271,13 @@ def drip_seq(screen,
 
 
 def example():
+    """
+    example for demonstrating drip.py module abilities
+    includes a movable  by W,A,S,D ball
+    
+    returns:
+    fps : float average frames per sec. at the closure of the prog
+    """
     fps = 0
     paused = False
     r_vector, v = model.make_water(400, 600, -200, 0, 30)  # делаем массив воды
@@ -285,7 +306,7 @@ def example():
 
     # инициализация уток
 
-    Duck.duck_array.append(Duck(30, 200, 200,))
+    Duck.duck_array.append(Duck(30, 200, 200, ))
     while not done:
 
         for event in pg.event.get():
@@ -334,7 +355,8 @@ def example():
 
         screen.fill(bg_color)
         destr, r_vector, v = drip_seq(
-            screen, destr, destr_x, destr_y, indestr, indestr_x, indestr_y, indestr_mask,
+            screen, destr, destr_x, destr_y,
+            indestr, indestr_x, indestr_y, indestr_mask,
             r_vector, v,
             paused)
         screen.blit(ball, ballrect)  # рисуем мяч

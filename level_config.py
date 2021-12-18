@@ -12,10 +12,21 @@ screen = pygame.display.set_mode((10, 10))  # needed for convert to work
 def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info,
                  x_picture=None, y_picture=None):
     """
-    Function makes level (expand)
+    Function  to make levels
+    returns  a dictionary which holds functions which return level stats
+    parameters:
+    number : int(1-5) level number is used to determine which folder to use \
+    to get surfaces for level
+    x_destr, y_destr : int coordinates of left corner of destructible surface
+    x_ind, y_ind :  int coordinates of left corner of indestructible surface
+    duck_info : a list holding lists of 2 or 3 elements which describe \
+    ducks coordinates(int) and department (string)
+    Non-obligatory params:
+    x_picture, y_picture : positive int new size of picture
     """
 
     num = str(number)
+    # following functions return a pygame.Surface objects
 
     if (x_picture is None) or (y_picture is None):
 
@@ -44,6 +55,10 @@ def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info,
                 x_ind, y_ind)
 
     def duck_function():
+        """
+        Returns a list of Duck class examples\
+        from duck.info array
+        """
         duck_list = []
         for d in duck_info:
             if len(d) == 2:

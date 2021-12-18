@@ -7,7 +7,6 @@ from ducks import *
 from drip import drip_seq, Droplet
 from level_config import levels
 
-
 FPS = 30
 
 pygame.display.set_icon(icon)
@@ -66,9 +65,9 @@ def main_loop():
 
     counted_fps = 0
     while not game_state['finished']:
-        
+
         counted_fps = clock.get_fps()
-        # 
+        # if there are no ducs level is complete
         if len(Duck.duck_array) == 0:
             anounce_level_complete()
 
@@ -102,7 +101,6 @@ def main_loop():
             if game_state['in_level_end']:
                 Cat.draw(screen)
                 Cat.angle += 1000
-                          
 
         ButtonManager.show_buttons(screen)
 
