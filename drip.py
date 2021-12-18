@@ -18,11 +18,11 @@ def draw_polygon(screen, x, y):
     x, y - coordinates of the polygon (not sure which point exactly)
     """
 
-    n = random.randint(4, 6)
+    n = random.randint(3, 6)
     angles_array = [(2 * i * math.pi / n) + random.randrange(-7, 7, 1) / 100 for i in range(n)]
     points = []
     for angle in angles_array:
-        length = 30 + random.randint(-4, 7)
+        length = 30 + random.randint(-10, 10)
         points.append((x + length * math.sin(angle),
                        y + length * math.cos(angle)))
     pg.draw.polygon(screen, 'white', points)
@@ -33,7 +33,7 @@ class Droplet:
     Класс для отображения частиц воды
     """
 
-    side = 80  # размер поверхности для капли
+    side = 30  # размер поверхности для капли
     water_array = []  # массив в котором хранятся следы капель
 
     def __init__(self, x, y):
@@ -46,39 +46,46 @@ class Droplet:
         self.y = int(y)
         self.r = 10  # радиус частицы
         self.surf = pg.Surface((side, side), pg.SRCALPHA)
+        self.surf.set_alpha(100)
         pg.draw.circle(self.surf, 'blue',
                        [int(side / 2), int(side / 2)],
                        int(self.r))
         self.side = side
         self.k = 1  # коэфициент сжатия
+        self.time = 0
 
     def draw(self, screen, paused):
 
         """
         Рисует частицу и уменьшает размер поверхности
+        params:
+        screen : pygame.Surface
+        paused : Boolean : стоит ли игра на паузе
         """
-        if not paused:
-            self.side = int(self.side / (self.k * self.k))
 
         surf = pg.transform.scale(self.surf, (self.side, self.side))
-        surf.set_alpha(100)
         screen.blit(surf, (self.x, self.y))
+        if not paused:
+            self.side = int(self.side / (self.k))
 
     @staticmethod
     def draw_water(screen, paused):
         """
+        parametrs:
+        screen : pygame.Surface экран на котором рисуют
+        paused : Boolean стоит ли игра на паузе
         Рисует все следы из массива следов, если размер следа мал удаляет его
         """
+        for drop in Droplet.water_array:
+                drop.draw(screen, paused)
         if not paused:
             for drop in Droplet.water_array:
-                drop.draw(screen, paused)
-                drop.k += 0.005
-                if drop.k >= 1.05:
+                drop.k += 0.001
+                drop.time += 1
+                if drop.time >= 10:
                     Droplet.water_array.remove(drop)
-        else:
-            for drop in Droplet.water_array:
-                drop.draw(screen, paused)
-
+                    
+            
 
 def collide(mask, x_mask, y_mask, r_vector, i, v):
     """
@@ -314,7 +321,7 @@ def example():
 
         offset = destr_x - ballrect[0], destr_y - ballrect[1]
         offset1 = indestr_x - ballrect[0], indestr_y - ballrect[1]
-
+        destr_mask = pg.mask.from_surface(destr)
         overlap = (ball_mask.overlap(destr_mask, offset) or
                    ball_mask.overlap(indestr_mask, offset1))
 

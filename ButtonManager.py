@@ -2,10 +2,11 @@ import pygame
 
 from buttons import *
 
-# Массив с параметрами работы игры
+#  с параметрами работы игры
 game_state = {'finished': False,
               'paused': True,
               'in_menu': True,
+              'in_level_end' : False,
               'music_banned': True,
               'shape': 'circle',
               'loaded_level': 1, 'update': 1}
@@ -24,6 +25,7 @@ def go_to_menu():
     Начинает трек заново
     В случае если музыка не запрещена, начинается воспроизведение
     """
+    game_state['in_level_end'] = False
     game_state['in_menu'] = True
     pygame.mixer.music.play(loops=-1)
 
@@ -65,13 +67,30 @@ def control_shape():
 
 
 def change_level(level):
+    """
+    Функция обновляет индикатор обновления уровня игры. Меню закрывается.
+    parametrs:
+    level : уровень который надо загрузить
+    """
     game_state['in_menu'] = False
     game_state['update'] = level
 
+def anounce_level_change_complete(level):
+    """
+    parametrs:
+    level : int (1-5) загруженный уровень
+    Функция обьявляет о загрузке уровня и устанавливает его как загруженный
+    """
+    
+    game_state['loaded_level'] = level
+    game_state['update'] = 0
+    game_state['in_level_end'] = False
 
-"""
-Статический класс для работы визцализации и дейстявия всех кнопок
-"""
+def anounce_level_complete():
+    game_state['in_level_end'] = True
+
+
+#ниже идет описание кнопок
 
 play_button = Button(WIDTH / 2, HEIGHT / 2 - 300, button_play_surf,
                      playpause)
@@ -81,6 +100,10 @@ pause_button = Button(WIDTH - 40, 30, button_pause_surf, playpause)
 quit_button = Button(WIDTH / 2, HEIGHT / 2 - 270, button_quit_surf,
                      go_to_menu)
 
+replay_level_button = Button(WIDTH / 2, HEIGHT / 2 - 300, button_replay_surf,
+                     change_level, argument=1)
+
+
 replay_button = Button(40, 30, button_replay_surf, change_level,
                        argument=1)
 
@@ -89,9 +112,9 @@ sound_button = Button(WIDTH - 40, HEIGHT - 30, button_sound_surf,
 level_buttons = []
 
 for i in range(len(level_button_surf)):
-    level_buttons.append(Button(WIDTH / 2 - 120 + 120 * i, HEIGHT / 2,
+    level_buttons.append(Button(WIDTH / 2 - 240 + 120 * i, HEIGHT / 2,
                                 level_button_surf[i],
-                                change_level, argument=i + 1))
+                                change_level, argument=i+1))
 
 Pause_menu_buttons = [quit_button, play_button]
 
@@ -101,16 +124,19 @@ Menu_buttons = level_buttons
 
 Menu_buttons.append(sound_button)
 
+Level_end_buttons = [quit_button, replay_level_button]
+
 
 def updatecurlevel(loaded_level):
     """
+    parametrs:
+    loaded_level : int (1-5) уровень который загрузили
     Эта функция обновляет  то что делает кнопка replay при загрузке уровня
+    в соответствии с loaded_level
     """
 
-    replay_button_new = Button(40, 30, button_replay_surf, change_level,
-                               argument=loaded_level)
-    # обновляем соответсвующие элементы массива
-    Game_buttons[1] = replay_button_new
+    replay_button.argument = loaded_level
+    replay_level_button.argument = loaded_level
 
 
 def show_buttons(screen):
@@ -124,7 +150,15 @@ def show_buttons(screen):
     elif game_state['paused']:
         active_buttons = Pause_menu_buttons
         pygame.draw.rect(screen, 'green', (round(WIDTH / 2) - 60,
-                                           round(HEIGHT / 2) - 315, 120, 60), border_radius=20)
+                                           round(HEIGHT / 2) - 315, 120, 60),
+                         border_radius=20)
+
+    elif game_state['in_level_end']:
+        active_buttons = Level_end_buttons
+        pygame.draw.rect(screen, 'magenta', (round(WIDTH / 2) - 60,
+                                           round(HEIGHT / 2) - 315, 120, 60),
+                         border_radius=20)
+        
     else:
         active_buttons = Game_buttons
 
@@ -147,8 +181,11 @@ def check_click(screen, event):
         pygame.draw.rect(screen, 'green', (round(WIDTH / 2) - 60,
                                            round(HEIGHT / 2) - 15, 120, 60),
                          border_radius=20)
-    else:
 
+    elif game_state['in_level_end']:
+        active_buttons = Level_end_buttons
+    
+    else:
         active_buttons = Game_buttons
 
     for button in active_buttons:

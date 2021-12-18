@@ -24,12 +24,13 @@ pygame.mixer.music.pause()
 
 def load_level(level):
     """
-    Возращает параметры земли и неземли обновляет уток
+    parametrs :
+    level : int (1-5) уровень который мы загружаем
+    
+    Возращает параметры земли и неземли
+    обновляет уток, воду
+    Глушит музыку, объявляет о загрузке
     """
-
-    game_state['loaded_level'] = level
-
-    game_state['update'] = 0
 
     pygame.mixer.music.fadeout(10000)
 
@@ -38,13 +39,14 @@ def load_level(level):
     destr, destr_x, destr_y, destr_mask = levels[level - 1]['destr']()
 
     indestr, indestr_x, indestr_y, indestr_mask = levels[level - 1]['indestr']()
-
-    r_vector, v = model.make_water(400, 600, -200, 0, 220)  # делаем массив воды
+    r_vector, v = model.make_water(400, 600, -200, 0, 100)  # делаем массив воды
     # первые 4 числа определяют границы, последнее - количество частиц
 
     Duck.duck_array = levels[level - 1]['ducks']()
 
     Droplet.water_array = []  # уничтожили все капли
+
+    anounce_level_change_complete(level)
 
     return (destr, destr_x, destr_y, destr_mask,
             indestr, indestr_x, indestr_y, indestr_mask,
@@ -54,6 +56,8 @@ def load_level(level):
 def main_loop():
     """
     Основной цикл игры
+    returns :
+    counted_fps : int  уср. количество кадров в секунду в момент закрытия
     """
 
     # на всякий случай обьявим их тут это заглушит музыку но это фича
@@ -63,6 +67,9 @@ def main_loop():
     counted_fps = 0
     while not game_state['finished']:
         counted_fps = clock.get_fps()
+        
+        if len(Duck.duck_array) == 0:
+            anounce_level_complete()
 
         screen.fill('white')
         # screen.blit(brick_wall, (0, 0))
