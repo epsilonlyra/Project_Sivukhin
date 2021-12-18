@@ -44,18 +44,17 @@ HEIGHT = 800
 # параметры экрана
 
 class Picture:
-    """
-    Класс для рисования поверхностей на экране
-    """
+    
 
     def __init__(self, x, y, image, *size, angle=None):
         """
-        Инициализация класса Picture
+        Класс для рисования картинкок
         image : pygame.surface object который будет рисоватся
         x, y координаты центра image на screen (оси - стандарт pygame)
         *size : длина, высота . Если будет передано  не два аргумента,
         то будут использованы длина и высота image
         """
+        
         self.x = x
         self.y = y
         if len(size) == 2:
@@ -120,7 +119,7 @@ class Button(Picture):
 
 icon = fetch_file('pictures', 'icon.jpg')  # icon for app
 dgap_cat = fetch_file('pictures', 'cat_dgap.jpg')
-Cat = Picture(200, 700, dgap_cat, 100, 100, angle=0)
+Cat = Picture(100, 100, dgap_cat, 100, 100, angle=0)
 
 pygame.font.init()
 
@@ -143,4 +142,6 @@ BACKGROUND = pygame.transform.scale(
     BACKGROUND, (WIDTH, HEIGHT))
 
 brick_wall = fetch_file('pictures', 'wall.png')
+# создание надписи игра окончена
+game_over_surf = font.render('Level Finished', True, 'green')
 

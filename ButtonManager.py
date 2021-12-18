@@ -87,6 +87,9 @@ def anounce_level_change_complete(level):
     game_state['in_level_end'] = False
 
 def anounce_level_complete():
+    """
+    Функция объявляет о том что уровень пройден
+    """
     game_state['in_level_end'] = True
 
 
@@ -126,6 +129,8 @@ Menu_buttons.append(sound_button)
 
 Level_end_buttons = [quit_button, replay_level_button]
 
+active_buttons = []
+
 
 def updatecurlevel(loaded_level):
     """
@@ -138,7 +143,7 @@ def updatecurlevel(loaded_level):
     replay_button.argument = loaded_level
     replay_level_button.argument = loaded_level
 
-
+    
 def show_buttons(screen):
     """
     Выбирает активные кнопки и рисует их на screen
@@ -159,6 +164,10 @@ def show_buttons(screen):
                                            round(HEIGHT / 2) - 315, 120, 60),
                          border_radius=20)
         
+        screen.blit(game_over_surf,
+                    (round(WIDTH/2) - round(game_over_surf.get_width()/2),
+                    40))
+        
     else:
         active_buttons = Game_buttons
 
@@ -168,7 +177,7 @@ def show_buttons(screen):
 
 def check_click(screen, event):
     """
-    Выберает активные кнопки и проверяет наличие нажатия
+    Выбирает активные кнопки и проверяет наличие нажатия
     parametrs:
     screen : pygame.screen
     event : pygame.event.MOUSEBUTTONDOWN

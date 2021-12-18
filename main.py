@@ -39,7 +39,7 @@ def load_level(level):
     destr, destr_x, destr_y, destr_mask = levels[level - 1]['destr']()
 
     indestr, indestr_x, indestr_y, indestr_mask = levels[level - 1]['indestr']()
-    r_vector, v = model.make_water(400, 600, -200, 0, 100)  # делаем массив воды
+    r_vector, v = model.make_water(400, 600, -200, 0, 220)  # делаем массив воды
     # первые 4 числа определяют границы, последнее - количество частиц
 
     Duck.duck_array = levels[level - 1]['ducks']()
@@ -66,8 +66,9 @@ def main_loop():
 
     counted_fps = 0
     while not game_state['finished']:
-        counted_fps = clock.get_fps()
         
+        counted_fps = clock.get_fps()
+        # 
         if len(Duck.duck_array) == 0:
             anounce_level_complete()
 
@@ -97,6 +98,11 @@ def main_loop():
                 r_vector, v,
                 game_state['paused'], shape=game_state['shape']
             )
+
+            if game_state['in_level_end']:
+                Cat.draw(screen)
+                Cat.angle += 1000
+                          
 
         ButtonManager.show_buttons(screen)
 
