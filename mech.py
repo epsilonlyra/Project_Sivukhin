@@ -1,4 +1,5 @@
 import os
+import math
 
 import pygame
 
@@ -6,7 +7,7 @@ import buttons
 
 
 class Mech:
-    def __init__(self, collector_x, collector_y, collector_angle, body_x, body_y, body_angle, color):
+    def __init__(self, collector_x, collector_y, collector_angle, body_x, body_y, body_angle, move_angle, color):
         """
         Collector - part of the mech that collects water
         Body - part that moves after collector receives water
@@ -29,6 +30,8 @@ class Mech:
         self.body_surf = pygame.transform.rotate(images['body_' + self.color], self.body_angle)
         self.body_mask = pygame.mask.from_surface(self.body_surf)
 
+        self.move_angle = move_angle
+
         self.state = 0
         self.got_water = False
 
@@ -45,7 +48,7 @@ class Mech:
             overlap = True
         return overlap
 
-    def draw(self, screen, x = 0, y = 0):
+    def draw(self, screen, x=0, y=0):
         """
         Draws collector and body on the screen, displaced by x, y
         """
@@ -65,7 +68,8 @@ class Mech:
         if self.got_water:
             if self.state < 100:
                 self.state += 1
-                self.body_x += 1
+                self.body_x += math.cos(self.move_angle)
+                self.body_y += math.sin(self.move_angle)
 
 
 # creating array for Mech objects

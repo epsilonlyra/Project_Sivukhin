@@ -78,8 +78,8 @@ def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info, mech_info,
         """
         mech_list = []
         for mechanism in mech_info:
-            col_x, col_y, col_angle, body_x, body_y, body_angle, color = mechanism
-            mech_list.append(mech.Mech(col_x, col_y, col_angle, body_x, body_y, body_angle, color))
+            col_x, col_y, col_angle, body_x, body_y, body_angle, move_angle, color = mechanism
+            mech_list.append(mech.Mech(col_x, col_y, col_angle, body_x, body_y, body_angle, move_angle, color))
 
         return mech_list
 
@@ -88,7 +88,7 @@ def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info, mech_info,
     return level
 
 
-level1 = create_level(1, 340, 240, 340, 440, [(400, 200)], [(0, 0, 0, 100, 50, 0, 'orange')])
+level1 = create_level(1, 340, 240, 340, 440, [(400, 200)], [(0, 0, 0, 100, 50, 0, 0, 'orange')])
 
 level2 = create_level(2, 400, 400, 340, 440,
                       [(600, 350, 'fupm'), (610, 580, 'fpfe'), (100, 350)], [],
