@@ -74,19 +74,18 @@ def main_loop():
             anounce_level_complete()
 
         screen.fill('white')
-        #screen.blit(brick_wall, (0, 0))
-        
+        # screen.blit(brick_wall, (0, 0))
+
         if game_state['in_menu']:
             screen.blit(BACKGROUND, (0, 0))
 
             # рисуем собранные факультеты
             faculties = ducks.get_faculties()
-            i = 0
-            while i < len(faculties):
-                f = faculties[i]
-                screen.blit(ducks.duck_image[f][2], (10 + 90 * i, 10))
-                i += 1
-            
+            number = 0
+            while number < len(faculties):
+                faculty = faculties[number]
+                screen.blit(ducks.duck_image[faculty][2], (10 + 90 * number, 10))
+                number += 1
 
         else:
             if game_state['update']:
@@ -120,9 +119,9 @@ def main_loop():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_c:
                     control_shape()
-                if event.key ==pygame.K_h:
+                if event.key == pygame.K_h:
                     hideshow_help()
-                
+
     return counted_fps
 
 
