@@ -6,9 +6,9 @@ from buttons import *
 game_state = {'finished': False,
               'paused': True,
               'in_menu': True,
-              'show_help' : True,
+              'show_help': True,
               'in_level_end': False,
-              'in_help_menu' : True,
+              'in_help_menu': True,
               'music_banned': True,
               'shape': 'circle',
               'loaded_level': 1, 'update': 1}
@@ -65,7 +65,7 @@ def control_shape():
     """
     Function to control shape of cut-out area
     """
-    
+
     if game_state['shape'] == 'polyhedron':
         game_state['shape'] = 'circle'
     else:
@@ -99,6 +99,7 @@ def anounce_level_complete():
     Функция объявляет о том что уровень пройден
     """
     game_state['in_level_end'] = True
+
 
 def hideshow_help():
     """
@@ -146,8 +147,6 @@ Menu_buttons.append(sound_button)
 
 Level_end_buttons = [quit_button, replay_level_button]
 
-active_buttons = []
-
 
 def updatecurlevel(loaded_level):
     """
@@ -167,20 +166,18 @@ def show_buttons(screen):
     parametrs:
     screen : pygame.Surface
     """
-
     if game_state['in_menu']:
         pygame.mouse.set_visible(True)
-        active_buttons = Menu_buttons
-        
+        active_drawing_buttons = Menu_buttons
 
     elif game_state['paused']:
-        active_buttons = Pause_menu_buttons
+        active_drawing_buttons = Pause_menu_buttons
         pygame.draw.rect(screen, 'green', (round(WIDTH / 2) - 60,
                                            round(HEIGHT / 2) - 315, 120, 60),
                          border_radius=20)
 
     elif game_state['in_level_end']:
-        active_buttons = Level_end_buttons
+        active_drawing_buttons = Level_end_buttons
         pygame.draw.rect(screen, 'magenta', (round(WIDTH / 2) - 60,
                                              round(HEIGHT / 2) - 315, 120, 60),
                          border_radius=20)
@@ -190,10 +187,9 @@ def show_buttons(screen):
                      40))
 
     else:
-        active_buttons = Game_buttons
+        active_drawing_buttons = Game_buttons
 
-    
-    for button in active_buttons:
+    for button in active_drawing_buttons:
         button.draw(screen)
 
 

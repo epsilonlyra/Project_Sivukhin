@@ -45,7 +45,7 @@ class Mech:
             overlap = True
         return overlap
 
-    def draw(self, screen, x = 0, y = 0):
+    def draw(self, screen, x=0, y=0):
         """
         Draws collector and body on the screen, displaced by x, y
         """
