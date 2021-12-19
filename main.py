@@ -2,6 +2,7 @@ import mech
 import model
 import ducks
 import ButtonManager
+import level_config
 from ButtonManager import *
 from ducks import *
 
@@ -39,8 +40,13 @@ def load_level(level):
     destr, destr_x, destr_y, destr_mask = levels[level - 1]['destr']()
 
     indestr, indestr_x, indestr_y, indestr_mask = levels[level - 1]['indestr']()
+
     r_vector, v = model.make_water(400, 600, -200, 0, 220)  # делаем массив воды
     # первые 4 числа определяют границы, последнее - количество частиц
+
+    # if water was generated earlier, load r_vecto from files
+    if levels[level - 1]['water_generated']:
+        r_vector = level_config.load_water(level)
 
     Duck.duck_array = levels[level - 1]['ducks']()
     mech.mech_array = levels[level - 1]['mechs']()

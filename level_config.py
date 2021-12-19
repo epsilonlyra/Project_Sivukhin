@@ -1,4 +1,7 @@
 import pygame
+import json
+import os
+import numpy
 
 import mech
 import ducks
@@ -11,7 +14,7 @@ screen = pygame.display.set_mode((10, 10))  # needed for convert to work
 
 
 def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info, mech_info,
-                 x_picture=None, y_picture=None):
+                 x_picture=None, y_picture=None, water_generated=False):
     """
     Function  to make levels
     returns  a dictionary which holds functions which return level stats
@@ -83,16 +86,44 @@ def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info, mech_info,
 
         return mech_list
 
-    level = dict({'destr': destr, 'indestr': indestr, 'ducks': duck_function, 'mechs': mech_function})
+    level = dict({'destr': destr, 'indestr': indestr, 'ducks': duck_function, 'mechs': mech_function,
+                  'water_generated': water_generated})
 
     return level
+
+
+def load_water(number):
+    """
+    Return r_vector numpy array with water coordinates
+    """
+    num = str(number)
+    with open(os.path.join('pictures', 'levels', 'level' + num, 'water_position.json')) as file:
+        data = json.load(file)
+    with open(os.path.join('pictures', 'levels', 'level' + num, 'water_position.json'), 'w') as file:
+        json.dump(data, file)
+    data = numpy.array(data)
+    return data
+
+
+def record_water(number, array: numpy.ndarray):
+    """
+    Writes (numpy) array in water_position.json in level_number file
+    (This function is used only when creating new levels)
+    """
+    arr = array.tolist()
+    num = str(number)
+    with open(os.path.join('pictures', 'levels', 'level' + num, 'water_position.json')) as file:
+        data = json.load(file)
+    with open(os.path.join('pictures', 'levels', 'level' + num, 'water_position.json'), 'w') as file:
+        json.dump(arr, file)
+    return data
 
 
 level1 = create_level(1, 340, 240, 340, 440, [(400, 200)], [(0, 0, 0, 100, 50, 0, 0, 'orange')])
 
 level2 = create_level(2, 400, 400, 340, 440,
                       [(600, 350, 'fupm'), (610, 580, 'fpfe'), (100, 350)], [],
-                      x_picture=800, y_picture=800
+                      x_picture=800, y_picture=800, water_generated=True
                       )
 
 level3 = create_level(3, 400, 440, 400, 440, [(350, 350), (220, 520, 'dgap'), (450, 570, 'falt')], [],
