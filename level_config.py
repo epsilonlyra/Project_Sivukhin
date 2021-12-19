@@ -78,8 +78,8 @@ def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info, mech_info,
         """
         mech_list = []
         for mechanism in mech_info:
-            col_x, col_y, col_angle, body_x, body_y, body_angle, color = mechanism
-            mech_list.append(mech.Mech(col_x, col_y, col_angle, body_x, body_y, body_angle, color))
+            col_x, col_y, col_angle, body_x, body_y, body_angle, move_angle, color = mechanism
+            mech_list.append(mech.Mech(col_x, col_y, col_angle, body_x, body_y, body_angle, move_angle, color))
 
         return mech_list
 
@@ -88,7 +88,7 @@ def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info, mech_info,
     return level
 
 
-level1 = create_level(1, 340, 240, 340, 440, [(400, 200)], [(0, 0, 0, 100, 50, 0, 'orange')])
+level1 = create_level(1, 340, 240, 340, 440, [(400, 200)], [(0, 0, 0, 100, 50, 0, 0, 'orange')])
 
 level2 = create_level(2, 400, 400, 340, 440,
                       [(600, 350, 'fupm'), (610, 580, 'fpfe'), (100, 350)], [],
@@ -98,4 +98,6 @@ level2 = create_level(2, 400, 400, 340, 440,
 level3 = create_level(3, 400, 440, 400, 440, [(350, 350), (220, 520, 'dgap'), (450, 570, 'falt')], [],
                       x_picture=800, y_picture=800)
 
-levels = [level1, level2, level3]
+level4 = create_level(4, 350, 440, 350, 440, [(625, 670), (360, 730, 'dgap'), (268, 350, 'falt')], [(0, 450, 0, 580, 240, 0, 'orange')])
+
+levels = [level1, level2, level3, level4]
