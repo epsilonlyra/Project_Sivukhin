@@ -107,7 +107,9 @@ class Button(Picture):
     def check_click(self, event):
         """
         Проверка на клик пользователя по кнопке и выполнение функционала кнопки
+        Кроме того рисование кнопки на данном экране
         event : pygame.event.MOUSEBUTTONDOWN
+        screen : pygame.Surface
         """
         x = event.pos[0]
         y = event.pos[1]
@@ -145,3 +147,11 @@ BACKGROUND = pygame.transform.scale(
 brick_wall = fetch_file('pictures', 'wall.png')
 # создание надписи игра окончена
 game_over_surf = font.render('Level Finished', True, 'green')
+
+# созданеие инструкции
+INSTRUCTIONTEXT = fetch_file('pictures', 'instruction.png')
+INSTRUCTION = pygame.Surface((WIDTH, HEIGHT))
+INSTRUCTION.blit(BACKGROUND, (0, 0))
+INSTRUCTION.blit(INSTRUCTIONTEXT, (
+    (WIDTH/2 - round(INSTRUCTIONTEXT.get_width()/2)),
+    (HEIGHT/2 - round(INSTRUCTIONTEXT.get_height()/2))))

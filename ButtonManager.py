@@ -6,7 +6,9 @@ from buttons import *
 game_state = {'finished': False,
               'paused': True,
               'in_menu': True,
+              'show_help' : True,
               'in_level_end': False,
+              'in_help_menu' : True,
               'music_banned': True,
               'shape': 'circle',
               'loaded_level': 1, 'update': 1}
@@ -98,6 +100,16 @@ def anounce_level_complete():
     """
     game_state['in_level_end'] = True
 
+def hideshow_help():
+    """
+    Функция регулирует показ меню помощи
+    """
+    if game_state['show_help']:
+        game_state['show_help'] = False
+    else:
+        game_state['show_help'] = True
+        game_state['paused'] = True
+
 
 # ниже идет описание кнопок
 
@@ -151,11 +163,15 @@ def updatecurlevel(loaded_level):
 
 def show_buttons(screen):
     """
-    Выбирает активные кнопки и рисует их на screen
+    Рисует оконтовочки кнопок
+    parametrs:
+    screen : pygame.Surface
     """
+
     if game_state['in_menu']:
-        active_buttons = Menu_buttons
         pygame.mouse.set_visible(True)
+        active_buttons = Menu_buttons
+        
 
     elif game_state['paused']:
         active_buttons = Pause_menu_buttons
@@ -176,6 +192,7 @@ def show_buttons(screen):
     else:
         active_buttons = Game_buttons
 
+    
     for button in active_buttons:
         button.draw(screen)
 
@@ -202,5 +219,6 @@ def check_click(screen, event):
     else:
         active_buttons = Game_buttons
 
-    for button in active_buttons:
-        button.check_click(event)
+    if not game_state['show_help']:
+        for button in active_buttons:
+            button.check_click(event)

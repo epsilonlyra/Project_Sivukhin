@@ -378,7 +378,7 @@ def example():
         screen.fill(bg_color)
         destr, r_vector, v = drip_seq(
             screen, destr, destr_x, destr_y,
-            indestr, indestr_x, indestr_y, indestr_mask,
+            indestr, indestr_x, indestr_y,
             r_vector, v,
             paused)
         screen.blit(ball, ballrect)  # рисуем мяч

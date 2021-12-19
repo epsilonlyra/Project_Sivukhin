@@ -74,8 +74,8 @@ def main_loop():
             anounce_level_complete()
 
         screen.fill('white')
-        # screen.blit(brick_wall, (0, 0))
-
+        #screen.blit(brick_wall, (0, 0))
+        
         if game_state['in_menu']:
             screen.blit(BACKGROUND, (0, 0))
 
@@ -86,6 +86,7 @@ def main_loop():
                 f = faculties[i]
                 screen.blit(ducks.duck_image[f][2], (10 + 90 * i, 10))
                 i += 1
+            
 
         else:
             if game_state['update']:
@@ -105,6 +106,8 @@ def main_loop():
                 Cat.angle += 1000
 
         ButtonManager.show_buttons(screen)
+        if game_state['show_help']:
+            screen.blit(INSTRUCTION, (0, 0))
 
         pygame.display.update()
         clock.tick(FPS)
@@ -117,6 +120,9 @@ def main_loop():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_c:
                     control_shape()
+                if event.key ==pygame.K_h:
+                    hideshow_help()
+                
     return counted_fps
 
 
