@@ -129,4 +129,6 @@ level2 = create_level(2, 400, 400, 340, 440,
 level3 = create_level(3, 400, 440, 400, 440, [(350, 350), (220, 520, 'dgap'), (450, 570, 'falt')], [],
                       x_picture=800, y_picture=800)
 
-levels = [level1, level2, level3]
+level4 = create_level(4, 350, 440, 350, 440, [(625, 670), (360, 730, 'dgap'), (268, 350, 'falt')], [(0, 450, 0, 580, 240, 0, 'orange')])
+
+levels = [level1, level2, level3, level4]

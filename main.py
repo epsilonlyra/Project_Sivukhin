@@ -25,12 +25,12 @@ pygame.mixer.music.pause()
 
 def load_level(level):
     """
-    parametrs :
-    level : int (1-5) уровень который мы загружаем
+    parameters :
+    level : int (1-5) level which needs to be loaded
     
-    Возращает параметры земли и неземли
-    обновляет уток, воду
-    Глушит музыку, объявляет о загрузке
+    Returns characteristics of ground and rock
+    updates Mechanisms, Ducks, water
+    Announces level update, turns music off
     """
 
     pygame.mixer.music.fadeout(10000)
@@ -51,7 +51,7 @@ def load_level(level):
     Duck.duck_array = levels[level - 1]['ducks']()
     mech.mech_array = levels[level - 1]['mechs']()
 
-    Droplet.water_array = []  # уничтожили все капли
+    Droplet.water_array = []  # destroyed all droplets
 
     anounce_level_change_complete(level)
 
@@ -62,12 +62,12 @@ def load_level(level):
 
 def main_loop():
     """
-    Основной цикл игры
+    Main loop of game, game is being played here
     returns :
-    counted_fps : int  уср. количество кадров в секунду в момент закрытия
+    counted_fps : int  average frames per second in moment of game closure
     """
 
-    # на всякий случай обьявим их тут это заглушит музыку но это фича
+    #  we will announce these stuff here just in case  it will make sound stop, but it's a feature
     (destr, destr_x, destr_y, destr_mask, indestr, indestr_x,
      indestr_y, indestr_mask, r_vector, v) = load_level(game_state['update'])
 
@@ -85,7 +85,7 @@ def main_loop():
         if game_state['in_menu']:
             screen.blit(BACKGROUND, (0, 0))
 
-            # рисуем собранные факультеты
+            # drawing collected departments
             faculties = ducks.get_faculties()
             number = 0
             while number < len(faculties):
