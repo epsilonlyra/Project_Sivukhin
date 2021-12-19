@@ -1,10 +1,11 @@
-import pygame
 import json
 import os
-import numpy
 
-import mech
+import numpy
+import pygame
+
 import ducks
+import mech
 from buttons import fetch_file
 from drip import get_obstacles
 
@@ -132,4 +133,7 @@ level3 = create_level(3, 400, 440, 400, 440, [(350, 350), (220, 520, 'dgap'), (4
 level4 = create_level(4, 350, 440, 350, 440, [(625, 670), (360, 730, 'dgap'), (268, 350, 'falt')],
                       [(0, 450, 0, 580, 240, 0, 0, 'orange')])
 
-levels = [level1, level2, level3, level4]
+level5 = create_level(5, 350, 440, 350, 440, [(327, 700), (327, 270, 'dgap'), (75, 135, 'falt')],
+                      [(45, 125, 0, 290, 150, 0, 0, 'orange'), (60, 125, 0, 300, 350, 0, 0, 'blue')])
+
+levels = [level1, level2, level3, level4, level5]

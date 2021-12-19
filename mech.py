@@ -76,8 +76,8 @@ class Mech:
 mech_array = []
 
 # creating images for mechanisms
-collectors = ['collector_orange']
-bodies = ['body_orange']
+collectors = ['collector_orange', 'collector_blue']
+bodies = ['body_orange', 'body_blue']
 images = {}
 for col in collectors:
     picture = buttons.Picture(0, 0, buttons.fetch_file(os.path.join('pictures', 'mechanisms'), col + '.png'),
