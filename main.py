@@ -95,7 +95,7 @@ def main_loop():
 
             destr, r_vector, v = drip_seq(
                 screen, destr, destr_x, destr_y,
-                indestr, indestr_x, indestr_y, indestr_mask,
+                indestr, indestr_x, indestr_y,
                 r_vector, v,
                 game_state['paused'], shape=game_state['shape']
             )

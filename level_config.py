@@ -88,7 +88,7 @@ def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info, mech_info,
     return level
 
 
-level1 = create_level(1, 340, 240, 340, 440, [(400, 200)], [(0, 0, 0, 300, 300, 0, 'orange')])
+level1 = create_level(1, 340, 240, 340, 440, [(400, 200)], [(0, 0, 0, 100, 50, 0, 'orange')])
 
 level2 = create_level(2, 400, 400, 340, 440,
                       [(600, 350, 'fupm'), (610, 580, 'fpfe'), (100, 350)], [],

@@ -184,8 +184,8 @@ none.set_colorkey('white')
 
 
 def drip_seq(screen,
-             destr, destr_x, destr_y, indestr,
-             indestr_x, indestr_y, indestr_mask, r_vector, v,
+             destr, destr_x, destr_y, indestr_original,
+             indestr_x, indestr_y, r_vector, v,
              paused,
              shape='circle'):
     """
@@ -204,18 +204,21 @@ def drip_seq(screen,
         in-game tick
     """
 
+    # creating a copy of indestr so that mechanism are not permanently drawn
+    indestr = indestr_original.copy()
+
     # adding mechanisms to indestr
     for mechanism in mech.mech_array:
         mechanism.draw(indestr)
     indestr_mask = pg.mask.from_surface(indestr)
 
-    # moving mechanisms
-    for mechanism in mech.mech_array:
-        mechanism.move()
-
     destr_mask = pg.mask.from_surface(destr)
     mx, my = pg.mouse.get_pos()
     if not paused:
+        # moving mechanisms
+        for mechanism in mech.mech_array:
+            mechanism.move()
+
         r_vector, v = model.step(r_vector, v)  # работа модели
         cut_out(pg.mouse.get_pressed()[0], (mx, my), destr,
                 destr_x, destr_y, shape=shape)
