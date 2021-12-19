@@ -10,6 +10,7 @@ import model
 from buttons import fetch_file
 from ducks import Duck
 from ducks import duck_image
+import mech
 
 
 def draw_polygon(screen, x, y):
@@ -31,7 +32,6 @@ def draw_polygon(screen, x, y):
 
 
 class Droplet:
-
     side = 30  # размер поверхности для капли
     water_array = []  # массив в котором хранятся следы капель
 
@@ -83,6 +83,8 @@ class Droplet:
                 drop.time += 1
                 if drop.time >= 10:
                     Droplet.water_array.remove(drop)
+
+
 def collide(mask, x_mask, y_mask, r_vector, i, v):
     """
     Эта функция отвечает за столкновение частицы со стенками
@@ -97,7 +99,7 @@ def collide(mask, x_mask, y_mask, r_vector, i, v):
     returns:
     r_vector[i], v[i][0], v[i][1] : params of particle after reflection
     """
-    
+
     x, y = r_vector[i]
     x = int(x)
     y = int(y)
@@ -202,6 +204,15 @@ def drip_seq(screen,
         in-game tick
     """
 
+    # adding mechanisms to indestr
+    for mechanism in mech.mech_array:
+        mechanism.draw(indestr)
+    indestr_mask = pg.mask.from_surface(indestr)
+
+    # moving mechanisms
+    for mechanism in mech.mech_array:
+        mechanism.move()
+
     destr_mask = pg.mask.from_surface(destr)
     mx, my = pg.mouse.get_pos()
     if not paused:
@@ -215,6 +226,13 @@ def drip_seq(screen,
         x, y = r_vector[i]
         if not paused:
             Droplet.water_array.append(Droplet(x, y))  # добавляем новую поз.
+
+        # checking collision with collector
+        for mechanism in mech.mech_array:
+            if not mechanism.got_water:
+                if mechanism.check_collision_with_collector(x - indestr_x, y - indestr_y, drop_mask):
+                    mechanism.collected_water()
+                    r_vector[i] = [-1000, 1000]
 
         # соударения с поверхностями
         collide(destr_mask, destr_x, destr_y, r_vector, i, v)
@@ -264,7 +282,8 @@ def drip_seq(screen,
     # рисуем мышь
     screen.blit(mouse, (mx, my - mouse.get_height()))
 
-    for d in Duck.duck_array:  # рисуем уток
+    # рисуем уток
+    for d in Duck.duck_array:
         screen.blit(duck_image[d.faculty][d.level], (int(d.x), int(d.y)))
 
     return destr, r_vector, v

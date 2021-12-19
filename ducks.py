@@ -26,18 +26,23 @@ class Duck:
 
     def check(self, x, y, drop_mask):
         """
-        x, y - duck coordinates
+        x, y - particle coordinates
         Returns True if the particle hits the duck, False otherwise
         """
         x = int(x)
         y = int(y)
         offset = int(self.x) - x, int(self.y) - y
         crisis = drop_mask.overlap(self.mask, offset)
-        return crisis
+
+        answer = False
+        if crisis:
+            answer = True
+
+        return answer
 
     def upgrade(self):
         """
-        Changes level based on consumed water
+        Changes level of the duck based on consumed water
         level - determines duck's stage in life
         """
         if self.water >= self.max:

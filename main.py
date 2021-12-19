@@ -1,3 +1,4 @@
+import mech
 import model
 import ducks
 import ButtonManager
@@ -42,6 +43,7 @@ def load_level(level):
     # первые 4 числа определяют границы, последнее - количество частиц
 
     Duck.duck_array = levels[level - 1]['ducks']()
+    mech.mech_array = levels[level - 1]['mechs']()
 
     Droplet.water_array = []  # уничтожили все капли
 
@@ -67,7 +69,7 @@ def main_loop():
     while not game_state['finished']:
 
         counted_fps = clock.get_fps()
-        # if there are no ducs level is complete
+        # if there are no ducks level is complete
         if len(Duck.duck_array) == 0:
             anounce_level_complete()
 
