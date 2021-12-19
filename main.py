@@ -41,8 +41,8 @@ def load_level(level):
 
     indestr, indestr_x, indestr_y, indestr_mask = levels[level - 1]['indestr']()
 
-    r_vector, v = model.make_water(400, 600, -200, 0, 220)  # делаем массив воды
-    # первые 4 числа определяют границы, последнее - количество частиц
+    r_vector, v = model.make_water(400, 600, -200, 0, 220)  # making water array
+    # first 4 number are for border, last -amount of particles
 
     # if water was generated earlier, load r_vecto from files
     if levels[level - 1]['water_generated']:
