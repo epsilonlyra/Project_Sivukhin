@@ -75,7 +75,10 @@ def get_faculties():
     Returns array of ducks from json
     """
     with open('record.json') as file:
-        data = json.load(file)
+        try:
+            data = json.load(file)
+        except json.decoder.JSONDecodeError:
+            data = []
     with open('record.json', 'w') as file:
         json.dump(data, file)
     return data
