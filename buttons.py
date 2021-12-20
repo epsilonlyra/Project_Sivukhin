@@ -6,20 +6,19 @@ import pygame
 def fetch_file(directory, filename, *directories, file_type=None,
                x_size=None, y_size=None):
     """
-    Функция для работы с файлами
-    parametres:
-    directory : string  первая папка в  которой находится файл
-    filename : string имя файла, включая расширения
-    *directory : string  необязательный аргументы,
-            перечисленные через запятую папки на пути к файлу от directory
-    file_type : string тип файла по дефолту считается что файл картинка,
-                music - музыкальной, other иной
-    x_size, y_sizе : int если тип файла картинка(None) то эти параметры его
-        нового размера
+    Function for working with files in game folder
+    parameters:
+    directory : string  first folder in which file is located
+    filename : string name of file, including extension
+    *directory : string  non-obligatory arguments \
+            separated by commas folders on the way from directory to file
+    file_type : string file type, by default it us picture, can be changed to\
+        'music' or 'other'
+    x_size, y_size : int if file is a picture these are its new width and height
     return:
-        если file_type is None : pygame.Surface
-        eсли file_type is music : сделает pygame.music.load файла
-        иначе вернет abspath
+        if file_type is None : pygame.Surface
+        if file_type is music : makes pygame.music.load 
+        else gets abspath
     """
 
     path = os.path.abspath(directory)
@@ -49,11 +48,11 @@ class Picture:
 
     def __init__(self, x, y, image, *size, angle=None):
         """
-        Класс для рисования картинкок
-        image : pygame.surface object который будет рисоватся
-        x, y координаты центра image на screen (оси - стандарт pygame)
-        *size : длина, высота . Если будет передано  не два аргумента,
-        то будут использованы длина и высота image
+        Class for picture drawing
+        image : pygame.Surface
+        x, y coordinates of center of rectangle
+        *size : length, width of pic . If not two arguments are given uses \
+            pictures parametrs
         """
 
         self.x = x
@@ -78,9 +77,9 @@ class Picture:
 
     def draw(self, screen):
         """
-        Рисование Picture на данном экране
+        Drawing Picture on given screen
         Parameters:
-        screen :  pygame.surf.object на котором мы будем рисовать
+        screen :  pygame.Surface
         """
 
         self.rot_image = pygame.transform.rotate(self.image, self.angle)
@@ -92,12 +91,13 @@ class Button(Picture):
 
     def __init__(self, x, y, image, func=None, *size, argument=None):
         """
-        Инициализация класса Picture
-        image : pygame.surface object который будет рисоватся
-        x, y координаты центра image на screen (оси - стандарт pygame)
-        *size : длина, высота изображения.Если будет передано не два аргумента,
-        то будут использованы длина и высота image
-        func : функция вызываемая при нажатии кнопки
+        Initialize Subclass of Picture
+        image : pygame.Surface
+        x, y coordinates of center of rectangle
+        *size : length, width of pic . If not two arguments are given uses \
+            pictures parametrs
+        func : function of button
+        argument : argument of that function
         """
 
         self.func = func
@@ -106,15 +106,14 @@ class Button(Picture):
 
     def check_click(self, event):
         """
-        Проверка на клик пользователя по кнопке и выполнение функционала кнопки
-        Кроме того рисование кнопки на данном экране
+        Checking if user clicked on button
         event : pygame.event.MOUSEBUTTONDOWN
         screen : pygame.Surface
         """
         x = event.pos[0]
         y = event.pos[1]
         if self.image_rect.collidepoint(x, y):
-            if self.argument:
+            if self.argument is not None:
                 self.func(self.argument)
             else:
                 self.func()
@@ -128,7 +127,7 @@ pygame.font.init()
 
 font = pygame.font.SysFont(None, 30)
 
-# создание поверхностей для кнопок
+# creating surfaces for buttons
 button_play_surf = font.render('Play', True, 'red', 'green')
 button_pause_surf = font.render('Pause', True, 'green')
 button_quit_surf = font.render('Quit', True, 'red')
@@ -139,16 +138,16 @@ for i in range(1, 6):
     level_button_surf.append(font.render('Level' + str(i), False, 'green',
                                          'black'))
 
-# создание бэкграунда для главного меню и левелов
+# creating Background
 BACKGROUND = (fetch_file('pictures', 'lab_corp.png'))
 BACKGROUND = pygame.transform.scale(
     BACKGROUND, (WIDTH, HEIGHT))
 
 brick_wall = fetch_file('pictures', 'wall.png')
-# создание надписи игра окончена
+# creating level end sign
 game_over_surf = font.render('Level Finished', True, 'green')
 
-# созданеие инструкции
+# creating instruction
 INSTRUCTIONTEXT = fetch_file('pictures', 'instruction.png')
 INSTRUCTION = pygame.Surface((WIDTH, HEIGHT))
 INSTRUCTION.blit(BACKGROUND, (0, 0))

@@ -2,7 +2,7 @@ import pygame
 
 from buttons import *
 
-#  с параметрами работы игры
+#  dictionary with parametrs of game
 game_state = {'finished': False,
               'paused': True,
               'in_menu': True,
@@ -16,7 +16,7 @@ game_state = {'finished': False,
 
 def end_game():
     """
-    Вызов прекращает игру
+    Calling it stops game
     """
     game_state['finished'] = True
 

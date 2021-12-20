@@ -119,7 +119,7 @@ def main_loop():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                game_state['finished'] = True
+                end_game()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 ButtonManager.check_click(screen, event)
             if event.type == pygame.KEYDOWN:
