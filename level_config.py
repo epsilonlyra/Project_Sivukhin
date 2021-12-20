@@ -73,7 +73,7 @@ def create_level(number, x_destr, y_destr, x_ind, y_ind, duck_info, mech_info,
                                             duck_x, duck_y))
             if len(d) == 3:
                 duck_x, duck_y, f = d
-                duck_list.append(ducks.Duck(30, duck_x,
+                duck_list.append(ducks.Duck(20, duck_x,
                                             duck_y, faculty=f))
         return duck_list
 
@@ -121,20 +121,25 @@ def record_water(number, array: numpy.ndarray):
     return data
 
 
-level1 = create_level(1, 340, 240, 340, 440, [(400, 200)], [(0, 0, 0, 100, 50, 0, 0, 'orange')])
+level0 = create_level(0, 340, 240, 340, 440, [(400, 200)], [(0, 0, 0, 100, 50, 0, 0, 'orange')])
+
+level1 = create_level(1, 350, 440, 350, 440,
+                      [(500, 400), (400, 500), (300, 600)],
+                      [],
+                      water_generated=True)
 
 level2 = create_level(2, 400, 400, 340, 440,
                       [(600, 350, 'fupm'), (610, 580, 'fpfe'), (100, 350)], [],
                       x_picture=800, y_picture=800, water_generated=True
                       )
 
-level3 = create_level(3, 400, 440, 400, 440, [(350, 350), (220, 520, 'dgap'), (450, 570, 'falt')], [],
+level3 = create_level(3, 400, 440, 400, 440, [(350, 670), (80, 670, 'dgap'), (620, 670, 'falt')], [],
                       x_picture=800, y_picture=800)
 
 level4 = create_level(4, 350, 440, 350, 440, [(625, 670), (360, 730, 'dgap'), (268, 350, 'falt')],
                       [(0, 450, 0, 580, 240, 0, 0, 'orange')])
 
-level5 = create_level(5, 350, 480, 350, 480, [(327, 700), (585, 370, 'dgap'), (90, 350, 'falt')],
+level5 = create_level(5, 350, 480, 350, 480, [(327, 720), (585, 370, 'dgap'), (90, 350, 'falt')],
                       [(90, 130, 0, 284, 150, 0, 0, 'orange'), (185, 130, 0, 235, 200, -90, math.pi/2, 'blue'),
                        (470, 130, 0, 420, 200, -90, math.pi/2, 'green'),
                        (585, 130, 0, 185, 625, 0, 0, 'red')])

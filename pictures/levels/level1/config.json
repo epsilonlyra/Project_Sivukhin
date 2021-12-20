@@ -1,7 +1,0 @@
-{
-"level": 1,
-"destr_x": 340, "destr_y": 240,
-"indestr_x": 340, "indestr_y": 440,
-"duck_info": [(400, 200)],
-"mech_info": [(0, 0, 0, 100, 50, 0, 0, 'orange']
-}
