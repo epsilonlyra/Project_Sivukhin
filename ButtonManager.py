@@ -1,5 +1,3 @@
-import pygame
-
 from buttons import *
 
 #  dictionary with parametrs of game

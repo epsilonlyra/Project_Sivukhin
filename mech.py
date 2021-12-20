@@ -14,7 +14,9 @@ class Mech:
 
         collector_x, collector_y, collector_angle - parameters, determining position of collector
         body_x, body_y, body_angle - parameters, determining position of body
-        color - color of the body and collector, either 'orange' or 'blue' ('blue' not added yet)
+        collector_angle and body_angle are measured in degrees
+        move_angle - direction in which the body moves (measured in radians)
+        color - color of the body and collector
         """
         self.color = color
 
