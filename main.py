@@ -80,7 +80,7 @@ def main_loop():
             anounce_level_complete()
 
         screen.fill('white')
-        # screen.blit(brick_wall, (0, 0))
+        # screen.blit(brick_wall, (0, 0)) (used on fast computers)
 
         if game_state['in_menu']:
             screen.blit(BACKGROUND, (0, 0))
