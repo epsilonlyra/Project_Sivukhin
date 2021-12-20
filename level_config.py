@@ -1,4 +1,5 @@
 import json
+import math
 import os
 
 import numpy
@@ -133,7 +134,9 @@ level3 = create_level(3, 400, 440, 400, 440, [(350, 350), (220, 520, 'dgap'), (4
 level4 = create_level(4, 350, 440, 350, 440, [(625, 670), (360, 730, 'dgap'), (268, 350, 'falt')],
                       [(0, 450, 0, 580, 240, 0, 0, 'orange')])
 
-level5 = create_level(5, 350, 440, 350, 440, [(327, 700), (327, 270, 'dgap'), (75, 135, 'falt')],
-                      [(45, 125, 0, 290, 150, 0, 0, 'orange'), (60, 125, 0, 300, 350, 0, 0, 'blue')])
+level5 = create_level(5, 350, 440, 350, 440, [(327, 700), (585, 330, 'dgap'), (90, 330, 'falt')],
+                      [(90, 125, 0, 284, 150, 0, 0, 'orange'), (185, 125, 0, 235, 200, -90, math.pi/2, 'blue'),
+                       (470, 125, 0, 420, 200, -90, math.pi/2, 'green'),
+                       (585, 125, 0, 185, 625, 0, 0, 'red')])
 
 levels = [level1, level2, level3, level4, level5]
